@@ -1,0 +1,18 @@
+////////////////////////////////////////////////////////////////
+/* Track Struct
+
+Created: Feb 05, 2014 - C. Kachulis
+*//////////////////////////////////////////////////////////////
+#ifndef _Track_
+#define _Track_
+
+struct Track
+{
+  int parID;
+  float mass;//in MeV
+  float momentum;//in MeV
+  float pdir[3];
+
+};
+
+#endif
