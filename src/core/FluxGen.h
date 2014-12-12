@@ -44,7 +44,7 @@ class FluxGen
   void SetEMax(double em){e_max=em;};
  protected:
   void RotateCoords(); //transforms from coords of flux generator to requested final coords
-  int GetRandDir(NEUTRINO::FLAVOR flav, float e, float dir[3]);
+  int GetRandDirection(NEUTRINO::FLAVOR flav, float e, float dir[3]);
   virtual int GetRandDir(NEUTRINO::FLAVOR flav,float e,float dir[3]);
   //sets dir as random selected momentum direction according to distribution in tables
   
