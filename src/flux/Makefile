@@ -1,9 +1,10 @@
+include ../../setup.make
 OBJS = HonFlx11.o HonFlx.o
 INCFILES = HonFlx11.h HonFlx.h
 
 LIBDIR= ../../lib
 INCDIR= ../../include/
-CXX= g++
+#CXX= clang++
 
 CXXFLAGS += -Werror -Wall -g -I$(INCDIR)
 

@@ -1,3 +1,5 @@
+CXX=clang++
+
 .PHONY: libs includes clean
 
 all: includes libs

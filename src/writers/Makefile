@@ -1,9 +1,10 @@
+include ../../setup.make
 OBJS = RootWriter.o NuanceWriter.o
 INCFILES = RootWriter.h NuanceWriter.h
 
 LIBDIR= ../../lib
 INCDIR= ../../include/
-CXX= g++
+#CXX= g++
 
 CXXFLAGS += -Werror -Wall -g -I$(INCDIR)
 

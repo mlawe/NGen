@@ -54,7 +54,7 @@ void TargetCyl::GetRandPos(double pos[3],TRandom3 * rndm)
 bool TargetCyl::IsWithin(double pos[3])
 {
   double r=sqrt(pow(pos[0]-pos0[0],2)+pow(pos[1]-pos0[1],2));
-  double z=std::abs(pos[3]-pos0[3]);
+  double z=std::abs(pos[2]-pos0[2]);
   bool ret=(r<rad*100 && z<ht*100/2); //cm
 
   return ret;

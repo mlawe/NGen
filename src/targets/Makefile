@@ -1,9 +1,11 @@
+include ../../setup.make
+
 OBJS = HKTank.o TargetCyl.o TargetSphere.o TargetSphereTrunc.o
 INCFILES = HKTank.h TargetCyl.h TargetSphere.h TargetSphereTrunc.h
 
 LIBDIR= ../../lib
 INCDIR= ../../include/
-CXX= g++
+#CXX= g++
 
 CXXFLAGS += -Werror -Wall -g -I$(INCDIR)
 

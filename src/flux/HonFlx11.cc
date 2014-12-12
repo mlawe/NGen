@@ -84,7 +84,7 @@ double HonFlx11::GetFlux(float E,NEUTRINO::FLAVOR nuFlav)
       fprintf(stderr,"Error:Flux not fully loaded\n");
       return -1;
     }
-  if(!solarAct<0)
+  if(solarAct<0)
     {
       fprintf(stderr,"Error: Solar Activity Not Set\n");
       return -1;
@@ -129,7 +129,7 @@ double HonFlx11::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
       return -1;
     }
  
-  if(!solarAct<0)
+  if(solarAct<0)
     {
       fprintf(stderr,"Error: Solar Activity Not Set\n");
       return -1;
@@ -214,7 +214,7 @@ double HonFlx11::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
    {
      phi=phi-2.*Pi;
    }
-
+ iEL=0;
  for(iEH=0;iEH<147;iEH++)
    {
      if(honE[iEH]>E)
@@ -297,14 +297,14 @@ double HonFlx11::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
      }
 
    char firstWord[200];
-   char firstWordC[8];
+   //   char firstWordC[8];
    fileStrm.getline(firstWord,200);
-   snprintf(firstWordC,8,firstWord);
-   if(strcmp(firstWordC,"average")!=0)
+   // snprintf(firstWordC,8,firstWord);
+   if(strncmp(firstWord,"average",7)!=0)
      {
        fprintf(stderr,"Wrong format for Honda Flux file\n");
        return -1;
-     }
+       }
    char line[200];
    
 

@@ -83,7 +83,7 @@ double HonFlx::GetFlux(float E,NEUTRINO::FLAVOR nuFlav)
       fprintf(stderr,"Error:Flux not fully loaded\n");
       return -1;
     }
-  if(!solarAct<0)
+  if(solarAct<0)
     {
       fprintf(stderr,"Error: Solar Activity Not Set\n");
       return -1;
@@ -128,7 +128,7 @@ double HonFlx::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
       return -1;
     }
  
-  if(!solarAct<0)
+  if(solarAct<0)
     {
       fprintf(stderr,"Error: Solar Activity Not Set\n");
       return -1;
@@ -217,7 +217,7 @@ double HonFlx::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
    {
      phi=-2.*Pi+phi;
    }
-
+ iEL=0;
  for(iEH=0;iEH<107;iEH++)
    {
      if(honE[iEH]>E)
@@ -298,7 +298,7 @@ double HonFlx::GetFlux(float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
       return -1;
     }
  
-  if(!solarAct<0)
+  if(solarAct<0)
     {
       fprintf(stderr,"Error: Solar Activity Not Set\n");
       return -1;
@@ -339,7 +339,7 @@ double HonFlx::GetFlux(float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
   CosZL=float(iCosZL+1)*0.1-1.05;
   CosZH=float(iCosZH+1)*0.1-1.05;
 
-  
+  iEL=0;
   for(iEH=0;iEH<35;iEH++)
     {
       if(honEL[iEH]>E)
@@ -398,14 +398,14 @@ double HonFlx::GetFlux(float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
      }
 
    char firstWord[200];
-   char firstWordC[8];
+   // char firstWordC[8];
    fileStrm.getline(firstWord,200);
-   snprintf(firstWordC,8,firstWord);
-   if(strcmp(firstWordC,"KAM00")==0)
+   //snprintf(firstWordC,8,firstWord);
+   if(strncmp(firstWord,"KAM00",4)==0)
      {
        return LoadLowFluxTable(fileStrm);
      }
-   if(strcmp(firstWordC,"average")!=0)
+   if(strncmp(firstWord,"average",7)!=0)
      {
        fprintf(stderr,"Wrong format for Honda Flux file\n");
        return -1;

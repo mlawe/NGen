@@ -14,8 +14,7 @@ class HKTank:public TargetShape
   virtual void GetRandPos(double pos[3],TRandom3 * rndm);
   virtual bool IsWithin(double pos[3]);
   
- private:
-  double length;
+
 
 
 };
