@@ -40,21 +40,27 @@ void TargetCyl::GetRandPos(double pos[3],TRandom3 * rndm)
     }
   z=(2.*rndm->Rndm()-1.)*ht/2.;
   
-  pos[0]=x*100; //want cm
+  /*  pos[0]=x*100; //want cm
   pos[1]=y*100;
   pos[2]=z*100;
+  */
+  //transform position
+  TVector3 v(x*100,y*100,z*100);
 
-  //translate by pos0
-  pos[0]+=pos0[0];
-  pos[1]+=pos0[1];
-  pos[2]+=pos0[2];
+  TransformCoordsMineToGen(&v);
+  pos[0]=v.X();
+  pos[1]=v.Y();
+  pos[2]=v.Z();
 
 }
 
 bool TargetCyl::IsWithin(double pos[3])
 {
-  double r=sqrt(pow(pos[0]-pos0[0],2)+pow(pos[1]-pos0[1],2));
-  double z=std::abs(pos[2]-pos0[2]);
+  TVector3 v(pos[0],pos[1],pos[2]);
+  TransformCoordsGenToMine(&v);
+
+  double r=sqrt(pow(v.X(),2)+pow(v.Y(),2));
+  double z=std::abs(v.Z());
   bool ret=(r<rad*100 && z<ht*100/2); //cm
 
   return ret;

@@ -39,17 +39,26 @@ void TargetSphereTrunc::GetRandPos(double pos[3],TRandom3 * rndm)
       pos[2]=100.*R*x3/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
       if(pos[2]<zmax*100) break;
     }
-  pos[0]+=pos0[0];
-  pos[1]+=pos0[1];
-  pos[2]+=pos0[2];
+
+
+  TVector3 v(pos[0],pos[1],pos[2]);
+
+  TransformCoordsMineToGen(&v);
+  pos[0]=v.X();
+  pos[1]=v.Y();
+  pos[2]=v.Z();
+
 
 }
 
 bool TargetSphereTrunc::IsWithin(double pos[3])
 {
-  double r=sqrt(pow(pos[0]-pos0[0],2)+pow(pos[1]-pos0[1],2)+pow(pos[2]-pos0[2],2));
+  TVector3 v(pos[0],pos[1],pos[2]);
+  TransformCoordsGenToMine(&v);
 
-  bool ret=(r<rad*100 && (pos[2]-pos0[2])<(zmax*100));
+  double r=sqrt(pow(v.X(),2)+pow(v.Y(),2)+pow(v.Z(),2));
+
+  bool ret=(r<rad*100 && (v.Z())<(zmax*100));
 
   return ret;
 

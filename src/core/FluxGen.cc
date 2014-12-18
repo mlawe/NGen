@@ -2,10 +2,6 @@
 #include <vector>
 #include <cmath>
 #include <stdlib.h>
-#ifndef __PI__
-#define __PI__
-const double Pi=4.0*atan(1.0);
-#endif
 
 #ifndef __PI__
 #define __PI__
