@@ -7,7 +7,7 @@ EvtVector::EvtVector()
 }
 Track* EvtVector::AddNewTrack()
 {
- 
+
   tracks.push_back(new Track);
   numTracks++;
   if(numTracks!=tracks.size())
@@ -25,7 +25,8 @@ Track*  EvtVector::GetTrack(size_t i)
 
   if(i<tracks.size())
     {
-      return tracks[i];
+
+     return tracks[i];
     }
   fprintf(stderr,"Cannot get track %zu, only %zu tracks exist\n",i,tracks.size());
    return NULL;
