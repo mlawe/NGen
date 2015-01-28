@@ -1,11 +1,11 @@
 #ifndef __TargetSphereTrunc__
 #define __TargetSphereTrunc__
 
-#include "TargetShape.h"
+#include "DetectorGeom.h"
 #include "TRandom3.h"
 #include <cmath>
 
-class TargetSphereTrunc: public TargetShape
+class TargetSphereTrunc: public DetectorGeom
 {
  public:
   TargetSphereTrunc();

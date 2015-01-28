@@ -6,7 +6,7 @@ const double Pi=4.0*atan(1.0);
 #endif
 
 
-TargetSphere::TargetSphere() : TargetShape::TargetShape()
+TargetSphere::TargetSphere() : DetectorGeom::DetectorGeom()
 {
 
   rad=0;

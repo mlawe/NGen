@@ -5,17 +5,19 @@
 #include "TRandom3.h"
 #include "EvtRate.h"
 #include "EvtVector.h"
-#include "TargetShape.h"
 #include "FlxTable.h"
-#include "TargetShape.h"
+#include "DetectorGeom.h"
 #include "Track.h"
 #include "Writer.h"
 #include "TVector3.h"
+/// Base class FluxGen
+/** Abstract base class for Flux Generator*/
 class FluxGen
 {
   //abstract base class for flux generation.  Handles main work in simulation
   // all virtual funtions should return 0 if successful, -1 if unsuccesful
  public:
+  /// Constructor
   FluxGen();
   
   virtual ~FluxGen();
@@ -28,7 +30,7 @@ class FluxGen
   void AddNewWriter(Writer * writer,const char* name);
   void CloseWriters(); //closes files and clear memory of writers
   void SetSeed(unsigned seed);
-  void SetTarget(TargetShape* t);
+  void SetDetector(DetectorGeom* t);
   void SetSolarAct(float s);
   void SetNYears(float y);
   void SetFlxTable(FlxTable* tbl);
@@ -72,7 +74,7 @@ class FluxGen
   double e_thresh;
   double e_max;
 
-  TargetShape* target;
+  DetectorGeom* detector;
   TVector3 * vX;
   TVector3 * vY;
   TVector3 * vZ;

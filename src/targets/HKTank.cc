@@ -8,7 +8,7 @@ const double Pi=4.0*atan(1.0);
 #endif
 
 
-HKTank::HKTank():TargetShape::TargetShape()
+HKTank::HKTank():DetectorGeom::DetectorGeom()
 {
 
 }

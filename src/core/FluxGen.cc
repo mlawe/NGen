@@ -14,7 +14,7 @@ FluxGen::FluxGen()
   flxTbl=NULL;
   currentVect=NULL;
   evtRate=NULL;
-  target=NULL;
+  detector=NULL;
   nYears=-1;
 
   vX=new TVector3(1,0,0);
@@ -93,9 +93,9 @@ void FluxGen::SetNYears(float y)
   nYears=y;
 }
 
-void FluxGen::SetTarget(TargetShape * t)
+void FluxGen::SetDetector(DetectorGeom * t)
 {
-  target=t;
+  detector=t;
 }
 void FluxGen::SetFlxTable(FlxTable* tbl)
 {
@@ -115,9 +115,9 @@ int FluxGen::CreateEvtRate()
       fprintf(stderr,"Error: nYears not set yet \n");
       return -1;
     }
-  if(!target)
+  if(!detector)
     {
-      fprintf(stderr,"Error:Target not set yet \n");
+      fprintf(stderr,"Error:Detector not set yet \n");
       return -1;
     }
   if(evtRate)
@@ -131,11 +131,11 @@ int FluxGen::CreateEvtRate()
   fluxCSIntMuBar.clear();
   double pnum=6.03e32; //nucleons per kton of water
   double time=3.15576e7; //seconds in a year
-  double fidMass=target->GetMass()/1.e6;//fiducial mass in kilotons;
+  double fidMass=detector->GetMass()/1.e6;//fiducial mass in kilotons;
   
   if(fidMass<0)
     {
-      fprintf(stderr,"Error: density of target not set yet \n");
+      fprintf(stderr,"Error: density of detector not set yet \n");
       return -1;
     }
   
@@ -274,7 +274,7 @@ int FluxGen::CreateNextVector()
     {
       currentVect->vertex[i]=0;
     }
-  target->GetRandPos(currentVect->vertex,rndm); 
+  detector->GetRandPos(currentVect->vertex,rndm); 
   tmpTrack->mass=0;
 
   while(true)

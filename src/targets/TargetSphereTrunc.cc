@@ -6,7 +6,7 @@ const double Pi=4.0*atan(1.0);
 #endif
 
 
-TargetSphereTrunc::TargetSphereTrunc() : TargetShape::TargetShape()
+TargetSphereTrunc::TargetSphereTrunc() : DetectorGeom::DetectorGeom()
 {
 
   rad=0;

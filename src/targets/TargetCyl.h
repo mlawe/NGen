@@ -1,10 +1,10 @@
 #ifndef __TargetCyl__
 #define __TargetCyl__
 
-#include "TargetShape.h"
+#include "DetectorGeom.h"
 #include "TRandom3.h"
 #include <cmath>
-class TargetCyl: public TargetShape
+class TargetCyl: public DetectorGeom
 {
  public:
   TargetCyl();

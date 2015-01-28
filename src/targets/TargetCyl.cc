@@ -6,7 +6,7 @@
 const double Pi=4.0*atan(1.0);
 #endif
 
-TargetCyl::TargetCyl() : TargetShape::TargetShape()
+TargetCyl::TargetCyl() : DetectorGeom::DetectorGeom()
 {
   ht=0;
   rad=0;

@@ -1,6 +1,6 @@
-#include "TargetShape.h"
+#include "DetectorGeom.h"
 
-TargetShape::TargetShape()
+DetectorGeom::DetectorGeom()
 {
   density=-1;
   for(int i=0;i<3;i++)
@@ -20,7 +20,7 @@ TargetShape::TargetShape()
   vMi=NULL;
 }
 
-TargetShape::~TargetShape()
+DetectorGeom::~DetectorGeom()
 {
 
   delete vX;
@@ -38,7 +38,7 @@ TargetShape::~TargetShape()
 }
 
 
-void TargetShape::TransformCoordsMineToGen(TVector3 * v)
+void DetectorGeom::TransformCoordsMineToGen(TVector3 * v)
 {
 
   double x=v->Dot(*vX);
@@ -49,7 +49,7 @@ void TargetShape::TransformCoordsMineToGen(TVector3 * v)
 
 }
 
-void TargetShape::TransformCoordsGenToMine(TVector3 * v)
+void DetectorGeom::TransformCoordsGenToMine(TVector3 * v)
 {
   v->SetXYZ(v->X()-pos0[0],v->Y()-pos0[1],v->Z()-pos0[2]);
 
@@ -65,7 +65,7 @@ void TargetShape::TransformCoordsGenToMine(TVector3 * v)
 }
 
 
-void TargetShape::UpdatevM()
+void DetectorGeom::UpdatevM()
 {
   vM[0][0]=vX->X();
   vM[0][1]=vX->Y();
