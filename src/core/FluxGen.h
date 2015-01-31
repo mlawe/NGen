@@ -10,6 +10,7 @@
 #include "Track.h"
 #include "Writer.h"
 #include "TVector3.h"
+#include "TimeStruct.h"
 /// Base class FluxGen
 /** Abstract base class for Flux Generator*/
 class FluxGen
@@ -24,8 +25,8 @@ class FluxGen
 
   int LoadFluxTable(std::string flxFile);
   
-  int CreateEvtRate();
-  int CreateNextVector(); // return 0 on success, 1 to skip writeout of this event, 2 if no more events left
+  int CreateEvtRate(Time_Struct t);
+  int CreateNextVector(); // return 0 on success, 1 to skip writeout of this event, 2 if no more events left, -1 on error
   int WriteCurrentVector();
   void AddNewWriter(Writer * writer,const char* name);
   void CloseWriters(); //closes files and clear memory of writers
@@ -44,6 +45,8 @@ class FluxGen
  
   void SetEThresh(double eth){e_thresh=eth;};
   void SetEMax(double em){e_max=em;};
+  void SetStartTime(Time_Struct t){startTime=t;};
+  void SetEndTime(Time_Struct t){endTime=t;};
  protected:
   void RotateCoords(); //transforms from coords of flux generator to requested final coords
   int GetRandDirection(NEUTRINO::FLAVOR flav, float e, float dir[3]);
@@ -74,6 +77,8 @@ class FluxGen
   double e_thresh;
   double e_max;
 
+
+  Time_Struct startTime,endTime;
   DetectorGeom* detector;
   TVector3 * vX;
   TVector3 * vY;
@@ -82,7 +87,8 @@ class FluxGen
   std::vector<double> fluxCSIntMu;
   std::vector<double> fluxCSIntEBar;
   std::vector<double> fluxCSIntMuBar;
-
+  std::vector<double> fluxCSIntTau;
+  std::vector<double> fluxCSIntTauBar;
   std::vector<Writer *> Writers;
 
   int EMode; //0 for Stepping, 1 for Inversion sampling

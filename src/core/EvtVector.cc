@@ -3,7 +3,7 @@
 EvtVector::EvtVector()
 {
   numTracks=0;
-  time=0;
+ 
 }
 Track* EvtVector::AddNewTrack()
 {

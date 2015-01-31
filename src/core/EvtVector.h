@@ -11,6 +11,7 @@ Created: Feb 05, 2014 - C. Kachulis
 #include <cstdio>
 #include <boost/any.hpp>
 #include <iostream>
+#include "TimeStruct.h"
 class EvtVector
 {
 public:
@@ -27,7 +28,7 @@ public:
   size_t GetNumTracks();
   int intType; //interaction Type
   double vertex[3]; //in cm
-  double time; //unix time (fractional, in seconds)
+  Time_Struct evtTime; //time of eveent
   int evtNumber;
 
 

@@ -102,7 +102,7 @@ void FluxGen::SetFlxTable(FlxTable* tbl)
   flxTbl=tbl;
 
 }
-int FluxGen::CreateEvtRate()
+int FluxGen::CreateEvtRate(Time_Struct t)
 {
 
   if(!flxTbl)
@@ -125,6 +125,7 @@ int FluxGen::CreateEvtRate()
       delete evtRate;
     }
   evtRate=new EvtRate();
+  evtRate->time=t;
   fluxCSIntE.clear();
   fluxCSIntEBar.clear();
   fluxCSIntMu.clear();
@@ -146,6 +147,8 @@ int FluxGen::CreateEvtRate()
   double tmpMUrt=0;
   double tmpEBARrt=0;
   double tmpMUBARrt=0;
+  double tmpTAUrt=0;
+  double tmpTAUBARrt=0;
   float E;
   
   for(size_t iE=0;iE<(EVec.size()-1);iE++)
@@ -158,6 +161,11 @@ int FluxGen::CreateEvtRate()
       double fCSEBAR=flxTbl->GetFlux(E,NEUTRINO::E_BAR)*GetCrossSec(NEUTRINO::E_BAR,E);
       double fCSMU=flxTbl->GetFlux(E,NEUTRINO::MU)*GetCrossSec(NEUTRINO::MU,E);
       double fCSMUBAR=flxTbl->GetFlux(E,NEUTRINO::MU_BAR)*GetCrossSec(NEUTRINO::MU_BAR,E);
+      double fCSTAU=flxTbl->GetFlux(E,NEUTRINO::TAU)*GetCrossSec(NEUTRINO::TAU,E);
+      double fCSTAUBAR=flxTbl->GetFlux(E,NEUTRINO::TAU_BAR)*GetCrossSec(NEUTRINO::TAU_BAR,E);
+
+
+
       //      if(E<10)fprintf(stderr,"E %f, %e, %e\n",E,flxTbl->GetFlux(E,NEUTRINO::MU_BAR)/(4*Pi),GetCrossSec(NEUTRINO::MU_BAR,E));
       if(fCSE<0 or fCSEBAR<0 or fCSMU<0 or fCSMUBAR<0)
 	{
@@ -169,6 +177,8 @@ int FluxGen::CreateEvtRate()
 	  fluxCSIntMu.push_back(fCSMU*ebin);
 	  fluxCSIntEBar.push_back(fCSEBAR*ebin);
 	  fluxCSIntMuBar.push_back(fCSMUBAR*ebin);
+	  fluxCSIntTauBar.push_back(fCSTAUBAR*ebin);
+	  fluxCSIntTau.push_back(fCSTAU*ebin);
 	  
 	}
       else
@@ -177,12 +187,16 @@ int FluxGen::CreateEvtRate()
 	  fluxCSIntMu.push_back(fluxCSIntMu.back()+fCSMU*ebin);
 	  fluxCSIntEBar.push_back(fluxCSIntEBar.back()+fCSEBAR*ebin);
 	  fluxCSIntMuBar.push_back(fluxCSIntMuBar.back()+fCSMUBAR*ebin);
+	  fluxCSIntTau.push_back(fluxCSIntMu.back()+fCSMU*ebin);
+	  fluxCSIntTauBar.push_back(fluxCSIntMuBar.back()+fCSMUBAR*ebin);
 	}	 
       //      fprintf(stderr,"iE %zu E %f fluxcsint %e\n",iE,E,fluxCSIntE.back()+fluxCSIntMu.back()+fluxCSIntEBar.back()+fluxCSIntMuBar.back());
       tmpErt+=fCSE*ebin;
       tmpEBARrt+=fCSEBAR*ebin;
       tmpMUrt+=fCSMU*ebin;
       tmpMUBARrt+=fCSMUBAR*ebin;
+      tmpTAUrt+=fCSTAU*ebin;
+      tmpTAUBARrt+=fCSTAUBAR*ebin;
       /*      if(E<10)
 	{
 	  fprintf(stderr,"E= %f,tmpMUBARrt = %f\n",E,tmpMUBARrt*time*pnum*1.e-38*1.e-4);
@@ -195,6 +209,14 @@ int FluxGen::CreateEvtRate()
   evtRate->mu=(int)(tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->mu_bar=(int)(tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->all=evtRate->e+evtRate->e_bar+evtRate->mu+evtRate->mu_bar;
+
+  evtRate->e_rt=tmpErt*pnum*fidMass*1.e-38*1.e-4;//last two factors convert 1e-38 cm^2 units to m^2 units
+  evtRate->e_bar_rt=tmpEBARrt*pnum*fidMass*1.e-38*1.e-4;
+  evtRate->mu_rt=tmpMUrt*pnum*fidMass*1.e-38*1.e-4;
+  evtRate->mu_bar_rt=tmpMUBARrt*pnum*fidMass*1.e-38*1.e-4;
+  evtRate->tau_bar_rt=tmpTAUBARrt*pnum*fidMass*1.e-38*1.e-4;
+  evtRate->total_rt=evtRate->e_rt+evtRate->e_bar_rt+evtRate->mu_rt+evtRate->mu_bar_rt+evtRate->tau_rt+evtRate->tau_bar_rt;
+
 
   fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   fprintf(stderr,"evtRate %i\n",evtRate->all);
@@ -224,16 +246,48 @@ int FluxGen::CreateNextVector()
     {
       return 2;
     }
-
-  //load up new empty vetor
+  Time_Struct theTime=startTime;
   float evtN=0;
   if(currentVect)
     {
+      
+      theTime=currentVect->evtTime;
       evtN=currentVect->evtNumber+1;
       delete currentVect;
+      
     }
+
+  Time_Struct last_calc_time=evtRate->time;
+  
+  if(flxTbl->IsTimeDependent())
+    {
+
+      if(flxTbl->MustRecalcEvtRate(last_calc_time,theTime))
+	{
+	  CreateEvtRate(theTime);
+	}
+
+      //choose time until next event
+      double rate=evtRate->total_rt*1.E-9;//rate, evts per nanosecond
+      
+      //choose time til next event from exponential distribution
+
+      double rnd=rndm->Rndm();
+      int nanos=int(-log(1-rnd)/rate);
+      Time_Struct tStep(0,nanos);
+
+      theTime+=tStep;
+    }
+  //load up new empty vetor
+  
+  /*  if(currentVect)
+    {
+      evtN=currentVect->evtNumber+1;
+      delete currentVect;
+      }*/
   currentVect=new EvtVector();
   currentVect->evtNumber=evtN;
+  currentVect->evtTime=theTime;
   //create first track, incoming neutrino
   Track* tmpTrack=currentVect->AddNewTrack();
 
@@ -473,8 +527,15 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
     case NEUTRINO::MU_BAR:
       fluxCSInt=fluxCSIntMuBar;
       break;
+    case NEUTRINO::TAU:
+      fluxCSInt=fluxCSIntTau;
+      break;
+    case NEUTRINO::TAU_BAR:
+      fluxCSInt=fluxCSIntTauBar;
+      break;
     case NEUTRINO::NUMBER:
       return -1;
+    
     }
   double r=rndm->Rndm()*fluxCSInt.back();
   int iEbin=-1;
