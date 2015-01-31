@@ -227,13 +227,17 @@ int FluxGen::CreateNextVector()
 
   //load up new empty vetor
   float evtN=0;
+  float evtNwritten=0;
   if(currentVect)
     {
       evtN=currentVect->evtNumber+1;
+      evtNwritten=currentVect->evtWrittenNumber;
+      if(currentVect->IsWrittenOut()) evtNwritten++;
       delete currentVect;
     }
   currentVect=new EvtVector();
   currentVect->evtNumber=evtN;
+  currentVect->evtWrittenNumber=evtNwritten;
   //create first track, incoming neutrino
   Track* tmpTrack=currentVect->AddNewTrack();
 
@@ -303,6 +307,7 @@ int FluxGen::CreateNextVector()
 	  return -1;
 	}
       
+      //      RotateCoords();
       //run the incoming neutino through nuclear simulation!!!!!!!!!!!
       int ret=ProcessIncomingTrack(tmpTrack);
    
@@ -432,8 +437,11 @@ float FluxGen::GetRandEInversion(NEUTRINO::FLAVOR flav)
       exit(1);
 
     }
-  float emin=flxTbl->GetEnergyBins().front();
-  float emax=flxTbl->GetEnergyBins().back();
+  
+  float emin=e_thresh;
+  float emax=e_max;
+  if(emin<flxTbl->GetEnergyBins().front()) emin=flxTbl->GetEnergyBins().front();
+  if(emax>flxTbl->GetEnergyBins().back()) emax=flxTbl->GetEnergyBins().back();
 
   float b=specinds[flav];
   float A=ratios[flav];
@@ -537,6 +545,7 @@ int FluxGen::WriteCurrentVector()
   for(size_t i=0;i<Writers.size();i++)
     {
       Writers[i]->WriteVector(currentVect);
+      currentVect->WrittenOut();
     }
 
   return 0;

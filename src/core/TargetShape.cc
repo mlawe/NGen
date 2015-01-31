@@ -1,5 +1,6 @@
 #include "TargetShape.h"
-
+#include <iostream>
+#include <stdlib.h>
 TargetShape::TargetShape()
 {
   density=-1;
@@ -67,6 +68,13 @@ void TargetShape::TransformCoordsGenToMine(TVector3 * v)
 
 void TargetShape::UpdatevM()
 {
+  if(vX->Dot(*vY)!=0 or vX->Dot(*vZ)!=0 or vY->Dot(*vZ)!=0)
+    {
+      std::cout<<"TargetShape Error: coordinate system not orthogonal"<<std::endl;
+      exit(1);
+
+    }
+
   vM[0][0]=vX->X();
   vM[0][1]=vX->Y();
   vM[0][2]=vX->Z();

@@ -29,8 +29,9 @@ public:
   double vertex[3]; //in cm
   double time; //unix time (fractional, in seconds)
   int evtNumber;
-
-
+  int evtWrittenNumber;
+  void WrittenOut(){kWrittenOut=true;};
+  bool IsWrittenOut(){return kWrittenOut;};
 template<typename T>
 void SetUserData(std::string,T);
 
@@ -39,6 +40,8 @@ template<typename T>
   T GetUserData(std::string);
 
 private:
+ bool kWrittenOut;
+
   std::vector<Track*> tracks;
   size_t numTracks;
   std::map<std::string,boost::any> UserData;

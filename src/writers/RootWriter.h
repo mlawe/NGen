@@ -16,7 +16,10 @@ class RootWriter: public Writer
 
   void CloseFile();
 
- private:
+ protected:
+  virtual void SetupHook(){};
+  virtual void PrefillHook(EvtVector*){};
+ protected:
   TFile * file;
   TTree * t;
 

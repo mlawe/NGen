@@ -38,6 +38,7 @@ void HKTank::GetRandPos(double pos[3],TRandom3 * rndm)
   //choose positive or negative x
   if(rndm->Rndm()>.5)
     {
+      //choose x>0
       while(true)
 	{
 	  double r=rndm->Rndm();
@@ -57,7 +58,7 @@ void HKTank::GetRandPos(double pos[3],TRandom3 * rndm)
 
   else
     {
-
+      //choose x<0
       while(true)
 	{
 	  double r=rndm->Rndm();

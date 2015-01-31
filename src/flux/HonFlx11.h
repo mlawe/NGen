@@ -31,7 +31,7 @@ public:
  
   double GetFlux(float E,NEUTRINO::FLAVOR nuFlav); //Get Flux for particular energy, neutrino flavor (summed over all directions) units are (m^2 sec GeV)-1
   double GetFlux(float phi,float cosZ, float E,NEUTRINO::FLAVOR nuFlav); //Units are (m^2 sec sr GEV)^-1
-  //phi is angle of direction of neutrino momentum measured from North(+y).  phi=0 is North(+y) phi =90 is West(-x), etc
+  //phi is angle of direction of neutrino momentum measured from North.  phi=0 is North phi =90 is West, etc
   //cosZ is also direction of neutrino momentum, measured from up.  so cosZ=+1 is an upward going neutrino, cosZ=-1 is downward going
  
   int LoadFluxTable(std::ifstream& fileStrm);

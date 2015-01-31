@@ -19,6 +19,8 @@ void RootWriter::OpenFile(std::string fileName)
       t->Branch("mass",mass,"mass[numTracks]/F");
       t->Branch("momentum",momentum,"momentum[numTracks]/F");
       t->Branch("pdir",pdir,"pdir[numTracks][3]/F");
+
+      SetupHook();
     }
 }
 
@@ -43,7 +45,7 @@ void RootWriter::WriteVector(EvtVector * evtVect)
 	      pdir[i][j]=evtVect->GetTrack((size_t)i)->pdir[j];
 	    }
 	}
-      
+      PrefillHook(evtVect);
       t->Fill();
     }
       

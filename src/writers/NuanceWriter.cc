@@ -36,7 +36,7 @@ void NuanceWriter::WriteVector(EvtVector * evtVect)
 
 	    
 	  }
-	fprintf(file,"$ info event: %i \n",evtVect->evtNumber);
+	fprintf(file,"$ info event: %i \n",evtVect->evtWrittenNumber);
 
 
 	for(int j=0;j<2;j++)

@@ -13,7 +13,8 @@ class TargetCyl: public TargetShape
   bool IsWithin(double pos[3]);
   void SetHeight(double h);//height in m
   void SetR(double r);//radius in m
-
+  double GetHeight(){return ht;};
+  double GetR(){return rad;};
 
  private:
   double ht;
