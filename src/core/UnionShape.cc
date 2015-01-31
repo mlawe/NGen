@@ -1,6 +1,6 @@
 #include "UnionShape.h"
 
-UnionShape::UnionShape(std::vector<TargetShape*> t) : TargetShape::TargetShape()
+UnionShape::UnionShape(std::vector<DetectorGeom*> t) : DetectorGeom::DetectorGeom()
 {
   for(size_t i=0;i<t.size();i++)
     {

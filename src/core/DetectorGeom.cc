@@ -1,7 +1,6 @@
-#include "TargetShape.h"
-#include <iostream>
-#include <stdlib.h>
-TargetShape::TargetShape()
+#include "DetectorGeom.h"
+
+DetectorGeom::DetectorGeom()
 {
   density=-1;
   for(int i=0;i<3;i++)
@@ -21,7 +20,7 @@ TargetShape::TargetShape()
   vMi=NULL;
 }
 
-TargetShape::~TargetShape()
+DetectorGeom::~DetectorGeom()
 {
 
   delete vX;
@@ -39,7 +38,7 @@ TargetShape::~TargetShape()
 }
 
 
-void TargetShape::TransformCoordsMineToGen(TVector3 * v)
+void DetectorGeom::TransformCoordsMineToGen(TVector3 * v)
 {
 
   double x=v->Dot(*vX);
@@ -50,7 +49,7 @@ void TargetShape::TransformCoordsMineToGen(TVector3 * v)
 
 }
 
-void TargetShape::TransformCoordsGenToMine(TVector3 * v)
+void DetectorGeom::TransformCoordsGenToMine(TVector3 * v)
 {
   v->SetXYZ(v->X()-pos0[0],v->Y()-pos0[1],v->Z()-pos0[2]);
 
@@ -66,15 +65,8 @@ void TargetShape::TransformCoordsGenToMine(TVector3 * v)
 }
 
 
-void TargetShape::UpdatevM()
+void DetectorGeom::UpdatevM()
 {
-  if(vX->Dot(*vY)!=0 or vX->Dot(*vZ)!=0 or vY->Dot(*vZ)!=0)
-    {
-      std::cout<<"TargetShape Error: coordinate system not orthogonal"<<std::endl;
-      exit(1);
-
-    }
-
   vM[0][0]=vX->X();
   vM[0][1]=vX->Y();
   vM[0][2]=vX->Z();

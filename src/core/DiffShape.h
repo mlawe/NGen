@@ -2,13 +2,13 @@
 #define __DiffShape__
 
 #include "TRandom3.h"
-#include "TargetShape.h"
+#include "DetectorGeom.h"
 
-class DiffShape : public TargetShape
+class DiffShape : public DetectorGeom
 {
 
  public:
-  DiffShape(TargetShape*,TargetShape*);
+  DiffShape(DetectorGeom*,DetectorGeom*);
   //first shape minus second shape
   //virtual ~DiffShape(){};
   double GetVolume();
@@ -17,8 +17,8 @@ class DiffShape : public TargetShape
   void Cleanup(){delete T1; T1=NULL; delete T2; T2=NULL;};
 
  protected:
-  TargetShape* T1;
-  TargetShape* T2;
+  DetectorGeom* T1;
+  DetectorGeom* T2;
 
 
 

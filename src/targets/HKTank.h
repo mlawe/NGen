@@ -1,9 +1,9 @@
 #ifndef __HKTANK__
 #define __HKTANK__
 
-#include "TargetShape.h"
+#include "DetectorGeom.h"
 
-class HKTank:public TargetShape
+class HKTank:public DetectorGeom
 {
  public:
   HKTank();

@@ -1,6 +1,6 @@
 #include "DiffShape.h"
 
-DiffShape::DiffShape(TargetShape* Ta,TargetShape* Tb) : TargetShape::TargetShape()
+DiffShape::DiffShape(DetectorGeom* Ta,DetectorGeom* Tb) : DetectorGeom::DetectorGeom()
 {
   T1=Ta;
   T2=Tb;

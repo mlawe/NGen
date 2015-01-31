@@ -1,1 +1,1 @@
-CXX=g++
+CXX=clang++

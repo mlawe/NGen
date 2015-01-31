@@ -1,15 +1,15 @@
-#ifndef __TargetShape__
-#define __TargetShape__
+#ifndef __DetectorGeom__
+#define __DetectorGeom__
 
 #include "TRandom3.h"
 #include "TVector3.h"
 #include "TMatrixD.h"
-class TargetShape
+class DetectorGeom
 {
  public:
-  TargetShape();
+  DetectorGeom();
 
-  virtual ~TargetShape();
+  virtual ~DetectorGeom();
 
   virtual double GetMass(){return GetVolume()*density;};//return mass in kg
   virtual double GetVolume() =0; //return volume in m^3

@@ -1,4 +1,4 @@
-CXX=clang++
+
 
 .PHONY: libs includes clean
 
