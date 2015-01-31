@@ -307,7 +307,7 @@ int FluxGen::CreateNextVector()
 	  return -1;
 	}
       
-      //      RotateCoords();
+
       //run the incoming neutino through nuclear simulation!!!!!!!!!!!
       int ret=ProcessIncomingTrack(tmpTrack);
    
