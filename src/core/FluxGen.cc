@@ -342,6 +342,13 @@ int FluxGen::CreateNextVector()
       tau_bar_rt=evtRate->tau_bar_rt;
       tot_rt=evtRate->total_rt;
     }
+  if(tot_rt!=e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt)
+    {
+      std::cerr<<"Event rate error in FluxGen::CreateNextEvent"<<std::endl;
+
+      return 1;
+
+    }
   //  fprintf(stderr,"%e   %e\n",e_rt,tau_rt);
   double testFlav=test*evtRate->total_rt;
   NEUTRINO::FLAVOR flav;

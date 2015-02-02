@@ -1,7 +1,7 @@
 #ifndef __TIMESTRUCT__
 #define __TIMESTRUCT__
 #include <iostream>
-
+#include <stdint.h>
 struct Time_Struct{
   int64_t seconds;
   int64_t nanoseconds;

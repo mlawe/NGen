@@ -16,7 +16,7 @@ class RootWriter: public Writer
 
   void CloseFile();
 
- private:
+ protected:
   TFile * file;
   TTree * t;
 
