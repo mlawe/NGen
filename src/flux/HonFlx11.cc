@@ -76,7 +76,7 @@ std::vector<float> HonFlx11::GetEnergyBins()
 
 
 }
-double HonFlx11::GetFlux(float E,NEUTRINO::FLAVOR nuFlav)
+double HonFlx11::GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t)
 {
 
   if(!(lowfluxLoaded and hfluxLoaded))
@@ -120,7 +120,7 @@ double HonFlx11::GetFlux(float E,NEUTRINO::FLAVOR nuFlav)
   return flux;
 }
 
-double HonFlx11::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
+double HonFlx11::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t)
 {
   
   if(!(lowfluxLoaded and hfluxLoaded))

@@ -19,13 +19,14 @@ class Track
   float mass;//in MeV
   float momentum;//in MeV
   float pdir[3];
-
-template<typename T>
- void SetUserData(std::string,T);
+  
+  ~Track();
+  template<typename T>
+    void SetUserData(std::string,T);
 
   
-template<typename T>
-  T GetUserData(std::string);
+  template<typename T>
+    T GetUserData(std::string);
 
 private:
 std::map<std::string,boost::any> UserData;
@@ -53,6 +54,7 @@ T Track::GetUserData(std::string key)
 
 
 }
+
 
 
 

@@ -19,7 +19,7 @@ void RootWriter::OpenFile(std::string fileName)
       t->Branch("mass",mass,"mass[numTracks]/F");
       t->Branch("momentum",momentum,"momentum[numTracks]/F");
       t->Branch("pdir",pdir,"pdir[numTracks][3]/F");
-
+      t->Branch("time",&time,"time/F");
       SetupHook();
     }
 }
@@ -29,6 +29,7 @@ void RootWriter::WriteVector(EvtVector * evtVect)
   //fprintf(stderr,"Writing root file\n");
   if(file)
     {
+      time=double(evtVect->evtTime.seconds)+double(evtVect->evtTime.nanoseconds)*1.E-9;
       intMode=evtVect->intType;
       numTracks=(int)evtVect->GetNumTracks();
       for(int i=0;i<3;i++)

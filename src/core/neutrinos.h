@@ -12,6 +12,8 @@ namespace NEUTRINO
       E_BAR,//1
       MU,//2
       MU_BAR,//3
+      TAU,
+      TAU_BAR,
       NUMBER, //ALWAYS MUST BE LAST! IF WE ADD OTHER NEUTRINOS, THEY MUST COME ABOVE
           
   };

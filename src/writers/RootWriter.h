@@ -19,7 +19,6 @@ class RootWriter: public Writer
  protected:
   virtual void SetupHook(){};
   virtual void PrefillHook(EvtVector*){};
- protected:
   TFile * file;
   TTree * t;
 
@@ -30,7 +29,7 @@ class RootWriter: public Writer
   float mass[200];
   float momentum[200];
   float pdir[200][3];
-
+  float time;
 
 };
 
