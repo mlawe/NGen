@@ -25,6 +25,7 @@ class FluxGen
 
   int LoadFluxTable(std::string flxFile);
   
+  int CreateEvtRate(){Time_Struct t(0,0);return CreateEvtRate(t);};
   int CreateEvtRate(Time_Struct t);
   int CreateNextVector(); // return 0 on success, 1 to skip writeout of this event, 2 if no more events left, -1 on error
   int WriteCurrentVector();

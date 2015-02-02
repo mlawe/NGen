@@ -26,7 +26,7 @@ EvtRate::~EvtRate()
 
 bool EvtRate::Check()
 {
-  if(e+e_bar+mu+mu_bar==all and e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt==total_rt)
+  if(e+e_bar+mu+mu_bar+tau+tau_bar==all and e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt==total_rt)
     {
       return true;
     }

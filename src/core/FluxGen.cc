@@ -70,6 +70,7 @@ int FluxGen::LoadFluxTable(std::string fluxFileN)
       fprintf(stderr,"Error:no flux table set\n");
       return -1;
     }
+  
   std::ifstream fileStrm;
   fileStrm.open(fluxFileN.c_str());
   int ret=flxTbl->LoadFluxTable(fileStrm);
@@ -110,7 +111,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
       fprintf(stderr,"Error:Flux tables not loaded yet\n");
       return -1;
     }
-  if(nYears<0)
+  if(nYears<0 and !(flxTbl->IsTimeDependent()))
     {
       fprintf(stderr,"Error: nYears not set yet \n");
       return -1;
@@ -130,6 +131,8 @@ int FluxGen::CreateEvtRate(Time_Struct t)
   fluxCSIntEBar.clear();
   fluxCSIntMu.clear();
   fluxCSIntMuBar.clear();
+  fluxCSIntTau.clear();
+  fluxCSIntTauBar.clear();
   double pnum=6.03e32; //nucleons per kton of water
   double time=3.15576e7; //seconds in a year
   double fidMass=detector->GetMass()/1.e6;//fiducial mass in kilotons;
@@ -157,17 +160,17 @@ int FluxGen::CreateEvtRate(Time_Struct t)
       
       E=(EVec[iE]+EVec[iE+1])/2;
       ebin=EVec[iE+1]-EVec[iE];
-      double fCSE=flxTbl->GetFlux(E,NEUTRINO::E)*GetCrossSec(NEUTRINO::E,E);
-      double fCSEBAR=flxTbl->GetFlux(E,NEUTRINO::E_BAR)*GetCrossSec(NEUTRINO::E_BAR,E);
-      double fCSMU=flxTbl->GetFlux(E,NEUTRINO::MU)*GetCrossSec(NEUTRINO::MU,E);
-      double fCSMUBAR=flxTbl->GetFlux(E,NEUTRINO::MU_BAR)*GetCrossSec(NEUTRINO::MU_BAR,E);
-      double fCSTAU=flxTbl->GetFlux(E,NEUTRINO::TAU)*GetCrossSec(NEUTRINO::TAU,E);
-      double fCSTAUBAR=flxTbl->GetFlux(E,NEUTRINO::TAU_BAR)*GetCrossSec(NEUTRINO::TAU_BAR,E);
+      double fCSE=flxTbl->GetFlux(E,NEUTRINO::E,evtRate->time)*GetCrossSec(NEUTRINO::E,E);
+      double fCSEBAR=flxTbl->GetFlux(E,NEUTRINO::E_BAR,evtRate->time)*GetCrossSec(NEUTRINO::E_BAR,E);
+      double fCSMU=flxTbl->GetFlux(E,NEUTRINO::MU,evtRate->time)*GetCrossSec(NEUTRINO::MU,E);
+      double fCSMUBAR=flxTbl->GetFlux(E,NEUTRINO::MU_BAR,evtRate->time)*GetCrossSec(NEUTRINO::MU_BAR,E);
+      double fCSTAU=flxTbl->GetFlux(E,NEUTRINO::TAU,evtRate->time)*GetCrossSec(NEUTRINO::TAU,E);
+      double fCSTAUBAR=flxTbl->GetFlux(E,NEUTRINO::TAU_BAR,evtRate->time)*GetCrossSec(NEUTRINO::TAU_BAR,E);
 
 
 
-      //      if(E<10)fprintf(stderr,"E %f, %e, %e\n",E,flxTbl->GetFlux(E,NEUTRINO::MU_BAR)/(4*Pi),GetCrossSec(NEUTRINO::MU_BAR,E));
-      if(fCSE<0 or fCSEBAR<0 or fCSMU<0 or fCSMUBAR<0)
+
+      if(fCSE<0 or fCSEBAR<0 or fCSMU<0 or fCSMUBAR<0 or fCSTAU<0 or fCSTAUBAR<0)
 	{
 	  return -1;
 	}
@@ -187,8 +190,8 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 	  fluxCSIntMu.push_back(fluxCSIntMu.back()+fCSMU*ebin);
 	  fluxCSIntEBar.push_back(fluxCSIntEBar.back()+fCSEBAR*ebin);
 	  fluxCSIntMuBar.push_back(fluxCSIntMuBar.back()+fCSMUBAR*ebin);
-	  fluxCSIntTau.push_back(fluxCSIntMu.back()+fCSMU*ebin);
-	  fluxCSIntTauBar.push_back(fluxCSIntMuBar.back()+fCSMUBAR*ebin);
+	  fluxCSIntTau.push_back(fluxCSIntTau.back()+fCSTAU*ebin);
+	  fluxCSIntTauBar.push_back(fluxCSIntTauBar.back()+fCSTAUBAR*ebin);
 	}	 
       //      fprintf(stderr,"iE %zu E %f fluxcsint %e\n",iE,E,fluxCSIntE.back()+fluxCSIntMu.back()+fluxCSIntEBar.back()+fluxCSIntMuBar.back());
       tmpErt+=fCSE*ebin;
@@ -208,18 +211,21 @@ int FluxGen::CreateEvtRate(Time_Struct t)
   evtRate->e_bar=(int)(tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->mu=(int)(tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->mu_bar=(int)(tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->all=evtRate->e+evtRate->e_bar+evtRate->mu+evtRate->mu_bar;
+  evtRate->tau_bar=(int)(tmpTAUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
+  evtRate->mu=(int)(tmpTAUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
+  evtRate->all=evtRate->e+evtRate->e_bar+evtRate->mu+evtRate->mu_bar+evtRate->tau+evtRate->tau_bar;
 
   evtRate->e_rt=tmpErt*pnum*fidMass*1.e-38*1.e-4;//last two factors convert 1e-38 cm^2 units to m^2 units
   evtRate->e_bar_rt=tmpEBARrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->mu_rt=tmpMUrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->mu_bar_rt=tmpMUBARrt*pnum*fidMass*1.e-38*1.e-4;
+  evtRate->tau_rt=tmpTAUrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->tau_bar_rt=tmpTAUBARrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->total_rt=evtRate->e_rt+evtRate->e_bar_rt+evtRate->mu_rt+evtRate->mu_bar_rt+evtRate->tau_rt+evtRate->tau_bar_rt;
 
 
-  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  fprintf(stderr,"evtRate %i\n",evtRate->all);
+  //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
+  // fprintf(stderr,"evtRate %e\n",evtRate->e_rt);
   
   return 0;
 }
@@ -242,7 +248,7 @@ int FluxGen::CreateNextVector()
       fprintf(stderr,"Error: Event rates do not add up\n");
       return -1;
     }
-  if(evtRate->all==0)
+  if(evtRate->all==0 and !(flxTbl->IsTimeDependent()))
     {
       return 2;
     }
@@ -253,31 +259,56 @@ int FluxGen::CreateNextVector()
       
       theTime=currentVect->evtTime;
       evtN=currentVect->evtNumber+1;
-      delete currentVect;
+      
       
     }
 
-  Time_Struct last_calc_time=evtRate->time;
+
   
-  if(flxTbl->IsTimeDependent())
+  while(flxTbl->IsTimeDependent())
     {
 
-      if(flxTbl->MustRecalcEvtRate(last_calc_time,theTime))
+      if(theTime>flxTbl->GetNextRecalcTime(evtRate->time))
 	{
 	  CreateEvtRate(theTime);
 	}
 
       //choose time until next event
-      double rate=evtRate->total_rt*1.E-9;//rate, evts per nanosecond
-      
+      double rate=evtRate->total_rt;//rate, evts per second
+      /* if(rate<1.E-15) 
+	{
+
+
+	  continue;
+	  }*/
+      //  std::cout<<"rate "<<rate<<std::endl;
       //choose time til next event from exponential distribution
 
       double rnd=rndm->Rndm();
-      int nanos=int(-log(1-rnd)/rate);
-      Time_Struct tStep(0,nanos);
-
+      double step=-log(1-rnd)/rate;//in nanoseconds
+      int64_t seconds=(int64_t)(step);
+      int64_t nanos=(int64_t)((step-seconds)*1.E9);
+      //     std::cout<<"seconds "<<seconds<<" nanos "<<nanos<<std::endl;
+      Time_Struct tStep(seconds,nanos);
+      Time_Struct last_time=theTime;
       theTime+=tStep;
+      //check if we have stepped too far.  can happen in low flux time interval, can step past flux increase.
+      if(theTime<flxTbl->GetNextRecalcTime(last_time))
+	{
+	  //good, can use this time
+	  break;
+	  
+	}
+      //we need to step a small amount and try again
+      theTime=flxTbl->GetNextRecalcTime(evtRate->time);
+      
+      if(theTime>endTime) return 2;
+      CreateEvtRate(theTime);
+      
     }
+
+  if(theTime>endTime) return 2;
+
   //load up new empty vetor
   
   /*  if(currentVect)
@@ -285,6 +316,7 @@ int FluxGen::CreateNextVector()
       evtN=currentVect->evtNumber+1;
       delete currentVect;
       }*/
+  if(currentVect) delete currentVect;
   currentVect=new EvtVector();
   currentVect->evtNumber=evtN;
   currentVect->evtTime=theTime;
@@ -293,37 +325,70 @@ int FluxGen::CreateNextVector()
 
   //now choose flavor
   double test=rndm->Rndm();
-
-  double testFlav=test*evtRate->all;
+  double e_rt=(double)evtRate->e;
+  double e_bar_rt=(double)evtRate->e_bar;
+  double mu_rt=(double)evtRate->mu;
+  double mu_bar_rt=(double)evtRate->mu_bar;
+  double tau_rt=(double)evtRate->tau;
+  double tau_bar_rt=(double)evtRate->tau_bar;
+  double tot_rt=(double)evtRate->all;
+  if(flxTbl->IsTimeDependent())
+    {
+      e_rt=evtRate->e_rt;
+      e_bar_rt=evtRate->e_bar_rt;
+      mu_rt=evtRate->mu_rt;
+      mu_bar_rt=evtRate->mu_bar_rt;
+      tau_rt=evtRate->tau_rt;
+      tau_bar_rt=evtRate->tau_bar_rt;
+      tot_rt=evtRate->total_rt;
+    }
+  //  fprintf(stderr,"%e   %e\n",e_rt,tau_rt);
+  double testFlav=test*evtRate->total_rt;
   NEUTRINO::FLAVOR flav;
-  if(testFlav<=(double)evtRate->e)
+  if(testFlav<=e_rt)
     {
       flav=NEUTRINO::E;
       tmpTrack->parID=12;
       evtRate->e-=1;
       evtRate->all-=1;
     }
-  else if(testFlav<=(double)(evtRate->e+evtRate->e_bar))
+  else if(testFlav<=(e_rt+e_bar_rt))
     {
       flav=NEUTRINO::E_BAR;
       tmpTrack->parID=-12;
       evtRate->e_bar-=1;
       evtRate->all-=1;
     }
-  else if(testFlav<=(double)(evtRate->e+evtRate->e_bar+evtRate->mu))
+  else if(testFlav<=(e_rt+e_bar_rt+mu_rt))
     {
       flav=NEUTRINO::MU;
       tmpTrack->parID=14;
       evtRate->mu-=1;
       evtRate->all-=1;
     }
-  else 
+  else if(testFlav<=(e_rt+e_bar_rt+mu_rt+mu_bar_rt))
     {
       flav=NEUTRINO::MU_BAR;
       tmpTrack->parID=-14;
       evtRate->mu_bar-=1;
       evtRate->all-=1;
     }
+  else if(testFlav<=(e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt))
+    {
+    
+      flav=NEUTRINO::TAU;
+      tmpTrack->parID=16;
+      evtRate->tau-=1;
+      evtRate->all-=1;
+    }
+  else 
+    {
+      flav=NEUTRINO::TAU_BAR;
+      tmpTrack->parID=-16;
+      evtRate->tau_bar-=1;
+      evtRate->all-=1;
+    }
+
   for(int i=0;i<3;i++)
     {
       currentVect->vertex[i]=0;
@@ -408,7 +473,7 @@ int FluxGen::GetRandDir(NEUTRINO::FLAVOR flav,float e,float dir[3])
 	{
 	  cosZ=-1.+float(i)*0.05;
 	  phi=float(j)*Pi/9.;
-	  flx=flxTbl->GetFlux(phi,cosZ,e,flav);
+	  flx=flxTbl->GetFlux(phi,cosZ,e,flav,currentVect->evtTime);
 	  if(flx>flxMax)
 	    {
 	      flxMax=flx;
@@ -427,11 +492,11 @@ int FluxGen::GetRandDir(NEUTRINO::FLAVOR flav,float e,float dir[3])
     {
       cosZ=rndm->Rndm()*2.-1.;
       phi=2.*rndm->Rndm()*Pi;
-      if(flxTbl->GetFlux(phi,cosZ,e,flav)>flxMax*rndm->Rndm())
+      if(flxTbl->GetFlux(phi,cosZ,e,flav,currentVect->evtTime)>flxMax*rndm->Rndm())
 	{
 	  break;
 	}
-      if(flxTbl->GetFlux(phi,cosZ,e,flav)<0)
+      if(flxTbl->GetFlux(phi,cosZ,e,flav,currentVect->evtTime)<0)
 	{
 	  return -1;
 	}
@@ -498,7 +563,7 @@ float FluxGen::GetRandEInversion(NEUTRINO::FLAVOR flav)
 
       e=pow(etmp,1/(b+1));
       float test=A*pow(e,b);
-      float flxCS=flxTbl->GetFlux(e,flav)*GetCrossSec(flav,e);
+      float flxCS=flxTbl->GetFlux(e,flav,currentVect->evtTime)*GetCrossSec(flav,e);
       if(flxCS>test)
 	{
 	  fprintf(stderr,"Error in random E inversion, flxCS>test\n");
@@ -541,6 +606,8 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
   int iEbin=-1;
   for(int i=0;i<(int)fluxCSInt.size();i++)
     {
+      //      fprintf(stderr,"%e   %e\n",fluxCSInt[i],fluxCSInt.back());
+      //      std::cout<<fluxCSInt[i]<<"  "<<fluxCSInt.back()<<std::endl;
       if(r<fluxCSInt[i])
 	{
 	  iEbin=i;
@@ -574,7 +641,7 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
     {
 
       e=rndm->Rndm()*(emax-emin)+emin;
-      if(flxTbl->GetFlux(e,flav)*GetCrossSec(flav,e)>rndm->Rndm()*test)
+      if(flxTbl->GetFlux(e,flav,currentVect->evtTime)*GetCrossSec(flav,e)>rndm->Rndm()*test)
 	{
 	  break;
 	}

@@ -1,6 +1,6 @@
 include ../../setup.make
 
-OBJS = FlxTable.o FluxGen.o EvtVector.o DetectorGeom.o EvtRate.o UnionShape.o DiffShape.o Writer.o 
+OBJS = FlxTable.o FluxGen.o EvtVector.o DetectorGeom.o EvtRate.o UnionShape.o DiffShape.o Writer.o TimeStruct.o Track.o
 INCFILES = FlxTable.h EvtRate.h EvtVector.h FluxGen.h \
 		DetectorGeom.h Track.h neutrinos.h Writer.h UnionShape.h DiffShape.h TimeStruct.h
 

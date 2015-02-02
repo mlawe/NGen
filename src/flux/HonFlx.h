@@ -15,6 +15,7 @@ Created: Feb 06, 2014 - C. Kachulis
 #include <stdio.h>
 #include <vector>
 #include "FlxTable.h"
+#include "TimeStruct.h"
 #ifndef __PI__
 #define __PI__
 const double Pi=4.0*atan(1.0);
@@ -29,8 +30,8 @@ public:
   ~HonFlx();
 
  
-  double GetFlux(float E,NEUTRINO::FLAVOR nuFlav); //Get Flux for particular energy, neutrino flavor (summed over all directions) units are (m^2 sec GeV)-1
-  double GetFlux(float phi,float cosZ, float E,NEUTRINO::FLAVOR nuFlav); //Units are (m^2 sec sr GEV)^-1
+  double GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t); //Get Flux for particular energy, neutrino flavor (summed over all directions) units are (m^2 sec GeV)-1
+  double GetFlux(float phi,float cosZ, float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t); //Units are (m^2 sec sr GEV)^-1
 
   int LoadFluxTable(std::ifstream& fileStrm);
  
