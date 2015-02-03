@@ -11,8 +11,8 @@ class HKTank:public DetectorGeom
   virtual ~HKTank();
 
   virtual double GetVolume();
-  virtual void GetRandPos(double pos[3],TRandom3 * rndm);
-  virtual bool IsWithin(double pos[3]);
+  virtual TVector3 GetRandPos(TRandom3 * rndm);
+  virtual bool IsWithin(TVector3 * pos);
   
 
 

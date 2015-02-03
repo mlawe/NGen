@@ -400,11 +400,8 @@ int FluxGen::CreateNextVector()
       evtRate->all-=1;
     }
 
-  for(int i=0;i<3;i++)
-    {
-      currentVect->vertex[i]=0;
-    }
-  detector->GetRandPos(currentVect->vertex,rndm); 
+
+  currentVect->vertex=detector->GetRandPos(rndm); 
   tmpTrack->mass=0;
 
   while(true)
@@ -418,17 +415,13 @@ int FluxGen::CreateNextVector()
       
       tmpTrack->momentum=e*1.e3;//convert GeV to MeV
       
-      for(int i=0;i<3;i++)
-	{
 
-	  tmpTrack->pdir[i]=0;
-	}
       //Get position of vertex
       if(!CheckEHook(tmpTrack->momentum,currentVect->vertex)) return 1;
 
       //get incoming direction of neutrino 
       
-      if(GetRandDirection(flav,e,tmpTrack->pdir)<0)
+      if(GetRandDirection(flav,e,&tmpTrack->pdir)<0)
 	{
 	  return -1;
 	}
@@ -449,7 +442,7 @@ int FluxGen::CreateNextVector()
 
 }
 
-int FluxGen::GetRandDirection(NEUTRINO::FLAVOR flav, float e, float dir[3])
+int FluxGen::GetRandDirection(NEUTRINO::FLAVOR flav, float e, TVector3 * dir)
 {
   switch(dirMode)
     {
@@ -470,7 +463,7 @@ int FluxGen::GetRandDirection(NEUTRINO::FLAVOR flav, float e, float dir[3])
 }
 
 
-int FluxGen::GetRandDir(NEUTRINO::FLAVOR flav,float e,float dir[3])
+int FluxGen::GetRandDir(NEUTRINO::FLAVOR flav,float e,TVector3* dir)
 {
   //return random direction by flux distro, e given in units of GeV
 
@@ -514,9 +507,9 @@ int FluxGen::GetRandDir(NEUTRINO::FLAVOR flav,float e,float dir[3])
 	}
       
     }
-  dir[0]=cos(phi)*sqrt(1-pow(cosZ,2));
-  dir[1]=sin(phi)*sqrt(1-pow(cosZ,2));
-  dir[2]=cosZ;
+  dir->SetX(cos(phi)*sqrt(1-pow(cosZ,2)));
+  dir->SetY(sin(phi)*sqrt(1-pow(cosZ,2)));
+  dir->SetZ(cosZ);
   return 0;
 
 }
@@ -708,33 +701,26 @@ void FluxGen::RotateCoords()
   //rotate from generator coords to detector coords.  Detector must be originally in generator using generator coords
 
   //first rotate vertex
-  TVector3 * vect=new TVector3(currentVect->vertex[0], currentVect->vertex[1], currentVect->vertex[2]);
-  RotatePoint(vect);
-  currentVect->vertex[0]=vect->X();
-  currentVect->vertex[1]=vect->Y();
-  currentVect->vertex[2]=vect->Z();
 
+  RotatePoint(&currentVect->vertex);
+ 
   //now rotate direction of all tracks
   size_t nTracks=currentVect->GetNumTracks();
-  
+
   for(size_t i=0;i<nTracks;i++)
     {
+
+
+
       Track * track=currentVect->GetTrack(i);
+      RotatePoint(&(track->pdir));
 
-      vect->SetX(track->pdir[0]);
-      vect->SetY(track->pdir[1]);
-      vect->SetZ(track->pdir[2]);
 
-      RotatePoint(vect);
-
-      track->pdir[0]=vect->X();
-      track->pdir[1]=vect->Y();
-      track->pdir[2]=vect->Z();
 
     }
 
   //done so clean up memory
-  delete vect;
+
     
 }
 

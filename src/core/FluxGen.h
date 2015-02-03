@@ -50,11 +50,11 @@ class FluxGen
   void SetEndTime(Time_Struct t){endTime=t;};
  protected:
   void RotateCoords(); //transforms from coords of flux generator to requested final coords
-  int GetRandDirection(NEUTRINO::FLAVOR flav, float e, float dir[3]);
-  virtual int GetRandDir(NEUTRINO::FLAVOR flav,float e,float dir[3]);
+  int GetRandDirection(NEUTRINO::FLAVOR flav, float e, TVector3 * dir);
+  virtual int GetRandDir(NEUTRINO::FLAVOR flav,float e,TVector3 * dir);
   //sets dir as random selected momentum direction according to distribution in tables
   
-  virtual bool CheckEHook(float p,double pos[3]){return true;};
+  virtual bool CheckEHook(float p,TVector3 pos){return true;};
   
   virtual float GetRandE(NEUTRINO::FLAVOR flav);
   //returns random energy in units of GeV

@@ -26,7 +26,7 @@ void TargetCyl::SetR(double r)
 {
   rad=r;
 }
-void TargetCyl::GetRandPos(double pos[3],TRandom3 * rndm)
+TVector3 TargetCyl::GetRandPos(TRandom3 * rndm)
 {
   double x,y,z;
   while(true)
@@ -48,19 +48,16 @@ void TargetCyl::GetRandPos(double pos[3],TRandom3 * rndm)
   TVector3 v(x*100,y*100,z*100);
 
   TransformCoordsMineToGen(&v);
-  pos[0]=v.X();
-  pos[1]=v.Y();
-  pos[2]=v.Z();
+  return v;
 
 }
 
-bool TargetCyl::IsWithin(double pos[3])
+bool TargetCyl::IsWithin(TVector3* v)
 {
-  TVector3 v(pos[0],pos[1],pos[2]);
-  TransformCoordsGenToMine(&v);
+  TransformCoordsGenToMine(v);
 
-  double r=sqrt(pow(v.X(),2)+pow(v.Y(),2));
-  double z=std::abs(v.Z());
+  double r=sqrt(pow(v->X(),2)+pow(v->Y(),2));
+  double z=std::abs(v->Z());
   bool ret=(r<rad*100 && z<ht*100/2); //cm
 
   return ret;

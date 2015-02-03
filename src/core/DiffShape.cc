@@ -13,18 +13,19 @@ double DiffShape::GetVolume()
 
 }
 
-void DiffShape::GetRandPos(double pos[3],TRandom3 *rndm)
+TVector3 DiffShape::GetRandPos(TRandom3 *rndm)
 {
+  TVector3 p;
   while(true)
     {
-      T1->GetRandPos(pos,rndm);
-      if(!T2->IsWithin(pos)) break;
+      p=T1->GetRandPos(rndm);
+      if(!T2->IsWithin(&p)) break;
     }
-  return;
+  return p;
 
 }
 
-bool DiffShape::IsWithin(double pos[3])
+bool DiffShape::IsWithin(TVector3* pos)
 {
   bool ret=(T1->IsWithin(pos) && !T2->IsWithin(pos));
   return ret;

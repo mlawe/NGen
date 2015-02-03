@@ -10,8 +10,8 @@ class TargetSphere: public DetectorGeom
  public:
   TargetSphere();
   double GetVolume();
-  void GetRandPos(double pos[3],TRandom3 * rndm);
-  bool IsWithin(double pos[3]);
+  TVector3 GetRandPos(TRandom3 * rndm);
+  bool IsWithin(TVector3 *pos);
   void SetR(double r){rad=r;}; //radius in meters
   
  private:

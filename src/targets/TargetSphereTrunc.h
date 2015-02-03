@@ -10,8 +10,8 @@ class TargetSphereTrunc: public DetectorGeom
  public:
   TargetSphereTrunc();
   double GetVolume();
-  void GetRandPos(double pos[3],TRandom3 * rndm);
-  bool IsWithin(double pos[3]);
+  TVector3 GetRandPos(TRandom3 * rndm);
+  bool IsWithin(TVector3*);
   void SetR(double r){rad=r;}; //radius in meters
   void SetMaxZ(double z){zmax=z;}; //in meters
  private:

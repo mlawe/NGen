@@ -23,8 +23,10 @@ double TargetSphereTrunc::GetVolume()
 
 }
 
-void TargetSphereTrunc::GetRandPos(double pos[3],TRandom3 * rndm)
+TVector3 TargetSphereTrunc::GetRandPos(TRandom3 * rndm)
 {
+
+  double x,y,z;
   while(true)
     {
       double R=rad*pow(rndm->Rndm(),1./3.);
@@ -34,31 +36,28 @@ void TargetSphereTrunc::GetRandPos(double pos[3],TRandom3 * rndm)
       double x3=rndm->Gaus();
   
 
-      pos[0]=100.*R*x1/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
-      pos[1]=100.*R*x2/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
-      pos[2]=100.*R*x3/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
-      if(pos[2]<zmax*100) break;
+      x=100.*R*x1/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
+      y=100.*R*x2/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
+      z=100.*R*x3/sqrt(pow(x1,2)+pow(x2,2)+pow(x3,2));
+      if(z<zmax*100) break;
     }
 
 
-  TVector3 v(pos[0],pos[1],pos[2]);
+  TVector3 v(x,y,z);
 
   TransformCoordsMineToGen(&v);
-  pos[0]=v.X();
-  pos[1]=v.Y();
-  pos[2]=v.Z();
-
-
+ 
+  return v;
 }
 
-bool TargetSphereTrunc::IsWithin(double pos[3])
+bool TargetSphereTrunc::IsWithin(TVector3 * v)
 {
-  TVector3 v(pos[0],pos[1],pos[2]);
-  TransformCoordsGenToMine(&v);
 
-  double r=sqrt(pow(v.X(),2)+pow(v.Y(),2)+pow(v.Z(),2));
+  TransformCoordsGenToMine(v);
 
-  bool ret=(r<rad*100 && (v.Z())<(zmax*100));
+  double r=sqrt(pow(v->X(),2)+pow(v->Y(),2)+pow(v->Z(),2));
+
+  bool ret=(r<rad*100 && (v->Z())<(zmax*100));
 
   return ret;
 

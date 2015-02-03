@@ -32,10 +32,10 @@ void RootWriter::WriteVector(EvtVector * evtVect)
       time=double(evtVect->evtTime.seconds)+double(evtVect->evtTime.nanoseconds)*1.E-9;
       intMode=evtVect->intType;
       numTracks=(int)evtVect->GetNumTracks();
-      for(int i=0;i<3;i++)
-	{
-	  pos[i]=evtVect->vertex[i];
-	}
+      pos[0]=evtVect->vertex.X();
+      pos[1]=evtVect->vertex.Y();
+      pos[2]=evtVect->vertex.Z();
+
       for(int i=0;i<numTracks;i++)
 	{
 	  parID[i]=evtVect->GetTrack((size_t)i)->parID;

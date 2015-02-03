@@ -12,6 +12,7 @@ Created: Feb 05, 2014 - C. Kachulis
 #include <boost/any.hpp>
 #include <iostream>
 #include "TimeStruct.h"
+#include "TVector3.h"
 class EvtVector
 {
 public:
@@ -27,7 +28,7 @@ public:
   Track*  GetTrack(size_t i);
   size_t GetNumTracks();
   int intType; //interaction Type
-  double vertex[3]; //in cm
+  TVector3 vertex; //in cm
   Time_Struct evtTime; //time of eveent
   int evtNumber;
   int evtWrittenNumber;

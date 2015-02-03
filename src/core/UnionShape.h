@@ -12,8 +12,8 @@ class UnionShape : public DetectorGeom
   virtual ~UnionShape();
   void Cleanup(){Targets.clear();};
   double GetVolume();
-  void GetRandPos(double pos[3],TRandom3 * rndm);
-  bool IsWithin(double pos[3]);
+  TVector3 GetRandPos(TRandom3 * rndm);
+  bool IsWithin(TVector3 *);
   void AddTarget(DetectorGeom* t){Targets.push_back(t);};
 
  protected:
