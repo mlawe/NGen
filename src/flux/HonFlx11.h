@@ -39,7 +39,8 @@ public:
  
   std::vector<float> GetEnergyBins();
 
- private:
+  void SetSolarAct(double sA){solarAct=sA;};
+ protected:
  
   float honTable[147][20][12][NEUTRINO::NUMBER][2]; //table of honda fluxes, dimensions are Energy,cosZ,phi,flavor,solar activity, units are (m^2 sec sr GeV)^-1
   //second index runs through cosZ, from -1 to 1 in steps of .1
@@ -51,7 +52,7 @@ public:
  
 
   void FillIntegratedTables();
-
+  double solarAct;
 
 };
 

@@ -33,7 +33,6 @@ class FluxGen
   void CloseWriters(); //closes files and clear memory of writers
   void SetSeed(unsigned seed);
   void SetDetector(DetectorGeom* t);
-  void SetSolarAct(float s);
   void SetNYears(float y);
   void SetFlxTable(FlxTable* tbl);
   void SetvX(TVector3 v){vX->SetXYZ(v.X(),v.Y(),v.Z());};//x-unit vector of final coordinates in generator coords

@@ -78,10 +78,6 @@ int FluxGen::LoadFluxTable(std::string fluxFileN)
   return ret;
 }
 
-void FluxGen::SetSolarAct(float s)
-{
-  flxTbl->SetSolarAct(s);
-}
 
 void FluxGen::SetSeed(unsigned seed)
 {

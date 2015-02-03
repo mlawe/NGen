@@ -12,11 +12,9 @@ class FlxTable
 {
 
  public:
-  FlxTable();
 
-  virtual ~FlxTable();
 
-   virtual double GetFlux(float E,NEUTRINO::FLAVOR flav,Time_Struct t) =0;
+  virtual double GetFlux(float E,NEUTRINO::FLAVOR flav,Time_Struct t) =0;
   //return flux in units of (m^2 sec GeV)^-1, E is in GeV
 
   virtual double GetFlux(float phi,float cosZ, float E,NEUTRINO::FLAVOR flav,Time_Struct t) =0;
@@ -26,12 +24,9 @@ class FlxTable
   virtual int LoadFluxTable(std::ifstream& fileStrm) =0;
   virtual int GetRandDir(NEUTRINO::FLAVOR, float, float dir[3]);
   virtual std::vector<float> GetEnergyBins() =0;
-  //unite are GeV
+  //units are GeV
 
-  void SetSolarAct(float sA);
 
- protected:
-  float solarAct;
 };
 
 

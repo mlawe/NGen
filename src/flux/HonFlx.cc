@@ -10,7 +10,7 @@ HonFlx::HonFlx() : FlxTable::FlxTable()
 {
   hfluxLoaded=false;
   lowfluxLoaded=false;
-
+  solarAct=-1;
 }
 HonFlx::~HonFlx()
 {

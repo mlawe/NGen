@@ -30,14 +30,15 @@ public:
   ~HonFlx();
 
  
-  double GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t); //Get Flux for particular energy, neutrino flavor (summed over all directions) units are (m^2 sec GeV)-1
-  double GetFlux(float phi,float cosZ, float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t); //Units are (m^2 sec sr GEV)^-1
+  virtual double GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t); //Get Flux for particular energy, neutrino flavor (summed over all directions) units are (m^2 sec GeV)-1
+  virtual double GetFlux(float phi,float cosZ, float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t); //Units are (m^2 sec sr GEV)^-1
 
   int LoadFluxTable(std::ifstream& fileStrm);
  
   std::vector<float> GetEnergyBins();
 
- private:
+  void SetSolarAct(double sA){solarAct=sA;};
+ protected:
  
   float honTable[107][20][12][NEUTRINO::NUMBER][2]; //table of honda fluxes, dimensions are Energy,cosZ,phi,flavor,solar activity, units are (m^2 sec sr GeV)^-1
   float honTableL[35][20][NEUTRINO::NUMBER][2];//table of honda fluxes for E<.1 GeV, only 1D, units are (m^2 sec sr GeV)^-1
@@ -52,6 +53,7 @@ public:
   void FillIntegratedTables();
   int LoadLowFluxTable(std::ifstream& fileStrm);
 
+  double solarAct;
 };
 
 
