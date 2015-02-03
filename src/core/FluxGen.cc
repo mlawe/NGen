@@ -193,7 +193,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 	  fluxCSIntTau.push_back(fluxCSIntTau.back()+fCSTAU*ebin);
 	  fluxCSIntTauBar.push_back(fluxCSIntTauBar.back()+fCSTAUBAR*ebin);
 	}	 
-      //      fprintf(stderr,"iE %zu E %f fluxcsint %e\n",iE,E,fluxCSIntE.back()+fluxCSIntMu.back()+fluxCSIntEBar.back()+fluxCSIntMuBar.back());
+
       tmpErt+=fCSE*ebin;
       tmpEBARrt+=fCSEBAR*ebin;
       tmpMUrt+=fCSMU*ebin;
@@ -207,12 +207,13 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 	  }*/
     }
   //  fprintf(stderr,"ratio %f\n",(fluxCSIntE[116]+fluxCSIntEBar[116]+fluxCSIntMu[116]+fluxCSIntMuBar[116])/(fluxCSIntE.back()+fluxCSIntMu.back()+fluxCSIntEBar.back()+fluxCSIntMuBar.back()));
+  //fprintf(stderr,"tmpMurt %e tmpErt %e time %e pnum %e fidMass %e nYears %f\n",tmpMUrt,tmpErt, time,pnum,fidMass,nYears);
   evtRate->e=(int)(tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4);//last two factors convert 1e-38 cm^2 units to m^2 units
   evtRate->e_bar=(int)(tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->mu=(int)(tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->mu_bar=(int)(tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->tau_bar=(int)(tmpTAUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->mu=(int)(tmpTAUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
+  evtRate->tau=(int)(tmpTAUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   evtRate->all=evtRate->e+evtRate->e_bar+evtRate->mu+evtRate->mu_bar+evtRate->tau+evtRate->tau_bar;
 
   evtRate->e_rt=tmpErt*pnum*fidMass*1.e-38*1.e-4;//last two factors convert 1e-38 cm^2 units to m^2 units
@@ -225,7 +226,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 
 
   //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  // fprintf(stderr,"evtRate %e\n",evtRate->e_rt);
+   fprintf(stderr,"evtRate %i\n",evtRate->all);
   
   return 0;
 }
@@ -352,8 +353,8 @@ int FluxGen::CreateNextVector()
       return 1;
 
     }
-  //  fprintf(stderr,"%e   %e\n",e_rt,tau_rt);
-  double testFlav=test*evtRate->total_rt;
+
+  double testFlav=test*tot_rt;
   NEUTRINO::FLAVOR flav;
   if(testFlav<=e_rt)
     {

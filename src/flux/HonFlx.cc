@@ -93,6 +93,7 @@ double HonFlx::GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t)
       fprintf(stderr,"Error: Energy out of range, E= %f\n",E);
       return -1;
     }
+  if(nuFlav>NEUTRINO::MU_BAR) return 0.;
   //find energy just below and above E
   int iE=0;
   for(int i=0;i<141;i++)
@@ -148,7 +149,7 @@ double HonFlx::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav,Tim
      fprintf(stderr,"Error: Energy out of range angle version E =%f\n",E);
      return -1;
    }
- 
+ if(nuFlav>NEUTRINO::MU_BAR) return 0.;
  if(E<honE[0])
    {
     

@@ -94,6 +94,7 @@ double HonFlx11::GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t)
       fprintf(stderr,"Error: Energy out of range, E= %f  %f %f\n",E,honE[0],honE[140]);
       return -1;
     }
+  if(nuFlav>NEUTRINO::MU_BAR) return 0.;
   //find energy just below and above E
   int iE=0;
   for(int i=0;i<147;i++)
@@ -150,7 +151,7 @@ double HonFlx11::GetFlux(float phi, float cosZ,float E,NEUTRINO::FLAVOR nuFlav,T
      return -1;
    }
  
- 
+ if(nuFlav>NEUTRINO::MU_BAR) return 0.;
  int iCosZL,iPhiL,iEL;//index lower entry (below value)
  int iCosZH,iPhiH,iEH;//index uper entry (above value)
  float CosZL,PhiL;

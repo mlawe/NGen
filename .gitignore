@@ -1,6 +1,9 @@
 include/*
 lib/*
 src/*/*.[ao]
+examples/*/*
+!examples/*/*.h
+!examples/*/*.cc		
+!examples/*/Makefile
 *~
 *#
-example/*
