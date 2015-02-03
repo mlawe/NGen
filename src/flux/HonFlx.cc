@@ -12,9 +12,6 @@ HonFlx::HonFlx() : FlxTable::FlxTable()
   lowfluxLoaded=false;
   solarAct=-1;
 }
-HonFlx::~HonFlx()
-{
-}
 
 std::vector<float> HonFlx::GetEnergyBins()
 {

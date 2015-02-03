@@ -14,7 +14,7 @@ class FlxTable
 
  public:
 
-
+  virtual ~FlxTable(){};
   virtual double GetFlux(float E,NEUTRINO::FLAVOR flav,Time_Struct t) =0;
   //return flux in units of (m^2 sec GeV)^-1, E is in GeV
 

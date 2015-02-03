@@ -13,10 +13,6 @@ HonFlx11::HonFlx11() : FlxTable::FlxTable()
 
 }
 
-HonFlx11::~HonFlx11()
-{
-}
-
 std::vector<float> HonFlx11::GetEnergyBins()
 {
   std::vector<float> ret;
