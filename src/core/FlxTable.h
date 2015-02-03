@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <vector>
 #include "TimeStruct.h"
+#include "TVector3.h"
 class FlxTable
 {
 
@@ -22,7 +23,7 @@ class FlxTable
   virtual bool IsTimeDependent(){return false;}; //Is the flux time dependent?
   virtual Time_Struct GetNextRecalcTime(Time_Struct t1){Time_Struct t;return t;};  //When do we need to recalc EvtRates if last calced at t1?
   virtual int LoadFluxTable(std::ifstream& fileStrm) =0;
-  virtual int GetRandDir(NEUTRINO::FLAVOR, float, float dir[3]);
+  virtual int GetRandDir(NEUTRINO::FLAVOR, float, TVector3 * dir);
   virtual std::vector<float> GetEnergyBins() =0;
   //units are GeV
 

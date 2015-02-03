@@ -12,13 +12,14 @@ Created: Feb 05, 2014 - C. Kachulis
 //#include "Container.h"
 #include <boost/any.hpp>
 #include <iostream>
+#include "TVector3.h"
 class Track
 {
  public:
   int parID;
   float mass;//in MeV
   float momentum;//in MeV
-  float pdir[3];
+  TVector3 pdir;
   
   ~Track();
   template<typename T>

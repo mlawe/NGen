@@ -10,8 +10,8 @@ class TargetCyl: public DetectorGeom
   TargetCyl();
   double GetVolume();
 
-  void GetRandPos(double pos[3], TRandom3 * rndm);
-  bool IsWithin(double pos[3]);
+  TVector3 GetRandPos(TRandom3 * rndm);
+  bool IsWithin(TVector3 * pos);
   void SetHeight(double h);//height in m
   void SetR(double r);//radius in m
   double GetHeight(){return ht;};

@@ -12,8 +12,8 @@ class DiffShape : public DetectorGeom
   //first shape minus second shape
   //virtual ~DiffShape(){};
   double GetVolume();
-  void GetRandPos(double pos[3],TRandom3 * rndm);
-  bool IsWithin(double pos[3]);
+  TVector3 GetRandPos(TRandom3 * rndm);
+  bool IsWithin(TVector3 *);
   void Cleanup(){delete T1; T1=NULL; delete T2; T2=NULL;};
 
  protected:

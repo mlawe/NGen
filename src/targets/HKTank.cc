@@ -27,7 +27,7 @@ double HKTank::GetVolume()
 }
 
 
-void HKTank::GetRandPos(double pos[3],TRandom3 * rndm)
+TVector3 HKTank::GetRandPos(TRandom3 * rndm)
 {
 
   double x,y,z;
@@ -79,23 +79,21 @@ void HKTank::GetRandPos(double pos[3],TRandom3 * rndm)
   TVector3 v(x,y,z);
 
   TransformCoordsMineToGen(&v);
-  pos[0]=v.X();
-  pos[1]=v.Y();
-  pos[2]=v.Z();
+  return v;
 }
 
-bool HKTank::IsWithin(double pos[3])
+bool HKTank::IsWithin(TVector3 * v)
 {
-  TVector3 v(pos[0],pos[1],pos[2]);
-  TransformCoordsGenToMine(&v);
-  if(std::abs(v.Z())>24*100) return false;
-  if(std::abs(v.Y())>25.25*100*5) return false;
 
-  if(v.X()>0)
+  TransformCoordsGenToMine(v);
+  if(std::abs(v->Z())>24*100) return false;
+  if(std::abs(v->Y())>25.25*100*5) return false;
+
+  if(v->X()>0)
     {
-      if(sqrt(pow((v.X()+8*100),2)+pow(v.Z(),2))>32*100) return false;
+      if(sqrt(pow((v->X()+8*100),2)+pow(v->Z(),2))>32*100) return false;
     }
-  else if(sqrt(pow((v.X()-8*100),2)+pow(v.Z(),2))>32*100) return false;
+  else if(sqrt(pow((v->X()-8*100),2)+pow(v->Z(),2))>32*100) return false;
       
   return true;
 }

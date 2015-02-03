@@ -1,5 +1,5 @@
 #include "UnionShape.h"
-
+#include <iostream>
 UnionShape::UnionShape(std::vector<DetectorGeom*> t) : DetectorGeom::DetectorGeom()
 {
   for(size_t i=0;i<t.size();i++)
@@ -20,7 +20,7 @@ double UnionShape::GetVolume()
 
 }
 
-bool UnionShape::IsWithin(double pos[3])
+bool UnionShape::IsWithin(TVector3* pos)
 {
 
   for(size_t i=0;i<Targets.size();i++)
@@ -35,10 +35,16 @@ bool UnionShape::IsWithin(double pos[3])
 
 }
 
-void UnionShape::GetRandPos(double pos[3],TRandom3 * rndm)
+TVector3 UnionShape::GetRandPos(TRandom3 * rndm)
 {
   std::vector<double> vols;
-  if(Targets.size()==0) return;
+  if(Targets.size()==0) 
+    {
+      std::cerr<<"Error in UnionShape::GetRandPos: There are no volumes"<<std::endl;
+      
+      TVector3 v(-9999999999999,-9999999999999,-9999999999999);
+      return v;
+    }
   vols.push_back(Targets[0]->GetVolume());
   for(size_t i=1;i<Targets.size();i++)
     {
@@ -54,7 +60,7 @@ void UnionShape::GetRandPos(double pos[3],TRandom3 * rndm)
       if(rV<vols[iVol]) break;
     }
 
-  Targets[iVol]->GetRandPos(pos,rndm);
+  return Targets[iVol]->GetRandPos(rndm);
 }
 
 

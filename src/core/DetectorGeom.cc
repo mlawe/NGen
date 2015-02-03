@@ -3,11 +3,7 @@
 DetectorGeom::DetectorGeom()
 {
   density=-1;
-  for(int i=0;i<3;i++)
-    {
-      pos0[i]=0;
-
-    }
+  pos0=new TVector3(0,0,0);
   vX=new TVector3(1,0,0);
   vY=new TVector3(0,1,0);
   vZ=new TVector3(0,0,1);
@@ -23,6 +19,7 @@ DetectorGeom::DetectorGeom()
 DetectorGeom::~DetectorGeom()
 {
 
+  delete pos0;
   delete vX;
   delete vY;
   delete vZ;
@@ -45,13 +42,13 @@ void DetectorGeom::TransformCoordsMineToGen(TVector3 * v)
   double y=v->Dot(*vY);
   double z=v->Dot(*vZ);
   
-  v->SetXYZ(x+pos0[0],y+pos0[1],z+pos0[2]);
+  v->SetXYZ(x+pos0->X(),y+pos0->Y(),z+pos0->Z());
 
 }
 
 void DetectorGeom::TransformCoordsGenToMine(TVector3 * v)
 {
-  v->SetXYZ(v->X()-pos0[0],v->Y()-pos0[1],v->Z()-pos0[2]);
+  v->SetXYZ(v->X()-pos0->X(),v->Y()-pos0->Y(),v->Z()-pos0->Z());
 
   
   double x=v->Dot(*vXi);

@@ -25,7 +25,7 @@ void NuanceWriter::WriteVector(EvtVector * evtVect)
 
         fprintf(file,"$ begin\n");
 	fprintf(file,"$ neut    %i \n",evtVect->intType); //find interactiontype!
-	fprintf(file,"$ vertex   %f   %f   %f     dummy \n",evtVect->vertex[0],evtVect->vertex[1],evtVect->vertex[2]);
+	fprintf(file,"$ vertex   %f   %f   %f     dummy \n",evtVect->vertex.X(),evtVect->vertex.Y(),evtVect->vertex.Z());
 
 	int num=std::min(2,(int)evtVect->GetNumTracks());
 	for(int i=0;i<num;i++)
