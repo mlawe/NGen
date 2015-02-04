@@ -25,11 +25,15 @@ FluxGen::FluxGen()
   specinds.push_back(-2.1); //ebar 
   specinds.push_back(-2.0); //mu
   specinds.push_back(-1.9); //mubar
+  specinds.push_back(-2.0); //tau
+  specinds.push_back(-1.9);//taubar
 
   ratios.push_back(400.*4*Pi); //e
   ratios.push_back(130.*4*Pi); //ebar
   ratios.push_back(600.*4*Pi); //mu
   ratios.push_back(250.*4*Pi); //mubar
+  ratios.push_back(600.*4*Pi); //tau
+  ratios.push_back(250.*4*Pi); //taubar
 
   EMode=0;
   dirMode=0;
@@ -222,7 +226,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 
 
   //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-   fprintf(stderr,"evtRate %i\n",evtRate->all);
+  fprintf(stderr,"evtRate %i\n",evtRate->all);
   
   return 0;
 }
@@ -546,7 +550,7 @@ void FluxGen::SetRatios(std::vector<float> rs)
 
 float FluxGen::GetRandEInversion(NEUTRINO::FLAVOR flav)
 {
-  if(ratios.size()!=4 or specinds.size()!=4)
+  if(ratios.size()!=6 or specinds.size()!=6)
     {
       fprintf(stderr,"Ratios and Spectral Indecies vectors wrond size\n");
       exit(1);
@@ -581,6 +585,7 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
 { 
   //This is basically a numerical inversion sampling to choose a bin and then metropolis to choose energy in that bin
  
+  std::cout<<"Using Stepping Energy techinqe"<<std::endl;
   std::vector<double> fluxCSInt;
   switch(flav)
     {
