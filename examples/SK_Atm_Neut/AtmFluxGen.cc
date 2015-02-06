@@ -6,6 +6,7 @@
 #include "vcworkC.h"
 #include "neworkC.h"
 #include "vcvrtxC.h"
+#include "necardatmC.h"
 
 #ifndef __PI__
 #define __PI__
@@ -72,6 +73,10 @@ int AtmFluxGen::Setup()
   nefillmodel_();
   nefillver_();
 
+  if(neutcardatm_.itau==1)
+    {
+      neutcard_.itauflgcore=1;
+    }
   return 0;
 }
  
