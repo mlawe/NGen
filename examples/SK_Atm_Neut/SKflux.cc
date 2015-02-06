@@ -62,22 +62,12 @@ int main(int argc,char * argv[])
      4: (optional) job #
   */
 
-  //First thing, load neut card data into common blocks for neut
-  //    necardap_();
-  //  necard_();  //  Add in when figure out library
-
-  
-  //  necardvc_();
   char c[100];
   sprintf(c,"%s",argv[2]);
   unsigned int len=strlen(c);
   fprintf(stderr,"c %s len %u\n",c,len);
-  //necardne2_(c,len);
-  necard_();
   necardatm_(c,len);
   
-  nefillmodel_();
-  nefillver_();
   //copy input neutcard to supersim.card if tau mode
   if(neutcardatm_.itau==1)
     {
@@ -105,16 +95,9 @@ int main(int argc,char * argv[])
  
 
   atmfluxGen->SetDetector(sk);
-  //  atmfluxGen->SetMode(neutcardatm_.imode);
+
 
   upmufluxGen->SetRMax(3000);//cm
-  //upmufluxGen->SetEThresh(1.6); //upmu energy threshold
-  //upmufluxGen->SetEMax(10000.); //upmu max energy in GeV for this section
-  //TargetSphereTrunc * sphereTrunc=new TargetSphereTrunc();
-  //sphereTrunc->SetR(11500.);// in meters for this section
-  //  sphereTrunc->SetR(6810.);// in meters for this section
-  //sphereTrunc->SetMaxZ(64); //meters
-  //DiffShape * upmuRck=new DiffShape(sphereTrunc,sk);
   TargetCyl * rockCyl=new TargetCyl();
   rockCyl->SetR(100.);//m
   rockCyl->SetDensity(2700); //kg/m^3
@@ -139,10 +122,6 @@ int main(int argc,char * argv[])
   honFlxtau->SetSolarAct(nesolact_.solact);
   honFlxUpMu->SetSolarAct(nesolact_.solact);
   
-  /*  NuanceWriter * nWriter=new NuanceWriter();
-  RootWriter * rootWriter=new RootWriter();
-  ZBSWriter * zbsWriter=new ZBSWriter();
-  */
   ifstream inFile(argv[1]);
   
   FlxTable * flx;
@@ -244,9 +223,10 @@ int main(int argc,char * argv[])
   //testing portions of spectrum only
   //fluxGen->SetEThresh(1);
   // fluxGen->SetEMax(1.016);
-  //Set Coordinate system
+
   fluxGen->SetEMode(1); //use analytic inversion sampling
-  
+
+  //Set Coordinate system  
   double angle=40.583;
   double angleR=angle*Pi/180.;
   TVector3 vX(-cos(angleR),sin(angleR),0);
@@ -257,13 +237,9 @@ int main(int argc,char * argv[])
   fluxGen->SetvZ(vZ);
 
     
-  //  fluxGen->LoadFluxTable("honda96low.dat");
-  fprintf(stderr,"Adding Writer\n");
-  //fluxGen->AddWriter(nWriter);
-  //fluxGen->AddWriter(rootWriter);
-  //fluxGen->AddWriter(zbsWriter);
+ 
   int count=0;
-  int outCount=0;
+  // int outCount=0;
   if(neutcardatm_.imode==1)
     {
       double RMax=4000;
@@ -314,7 +290,7 @@ int main(int argc,char * argv[])
       for(size_t i=0;i<EMaxs.size();i++)
 	{
 	  Rs.push_back((upmufluxGen->GetRange(EMaxs[i]*1000.)*3+upmufluxGen->GetRMax())/100.);
-	  }
+	}
       //RMax combining
       for(size_t i=0;i<Rs.size();i++)
 	{
@@ -347,107 +323,38 @@ int main(int argc,char * argv[])
 	  fprintf(stderr,"EMaxs vector is wrong size for upmu nesting\n");
 	  return 0;
 	}
-      double pos[3];
-      pos[0]=0;
-      pos[1]=0;
-      pos[2]=0;
-    
+      //      double pos[3];
+      //pos[0]=0;
+      //pos[1]=0;
+      //pos[2]=0;
+      TVector3 pos;
+
       for(size_t i=0;i<EMins.size();i++)
 	{
 	  fprintf(stderr,"Running upmu nest %zu with EMin %f.1 EMax %f.1 and R %f.0\n",i,EMins[i],EMaxs[i],Rs[i]);
 	  upmufluxGen->SetEThresh(EMins[i]);
 	  upmufluxGen->SetEMax(EMaxs[i]);
 	  upmufluxGen->ResetEHookCount();
-	  //sphereTrunc->SetR(Rs[i]);
+	
 	  rockCyl->SetHeight(Rs[i]+upmufluxGen->GetRMax()/100.);
-	  pos[2]=rockCyl->GetHeight()*100/2.;//cm
+	  pos.SetZ(rockCyl->GetHeight()*100/2.);//cm
 	  rockCyl->SetPos0(pos);
 	 
-	  fluxGen->CreateEvtRate();
+
 	  upmufluxGen->ResetFailedMu_Count();
 	  upmufluxGen->ResetFailedMu_NuCount();
 
-	  int writeoutcount=0;
+	  upmufluxGen->Run();
+	      
 	
-	  while(true)
-	    {
-	      count++;
-	      if(count/1000>outCount)
-		{
-		  outCount++;
-		  fprintf(stderr,"count %i\n",count);
-		}
-	      int flxOut;
-	      if((flxOut=fluxGen->CreateNextVector())<0)
-		{
-	      
-		  break;
-		}
-	      else if(flxOut==0)
-		{
-		  writeoutcount++;
-		  //Rotate Coords
-		  //fluxGen->RotateCoords();
-		  //write out event
-		  if(fluxGen->WriteCurrentVector()<0)
-		    {
-		      break;
-		    }
-		}
-	      else if(flxOut==2)
-		{
-		  //finished
-		  break;
-		}
-	      //flxOut==1 skips writing event
-	      
-	      
-	    }
-	  fprintf(stderr,"Wrote out %i events, %i events failed EHook, %i events failed Mu_Nu, %i events faile Mu, %i events > 1 TeV\n",writeoutcount,upmufluxGen->GetFailedEHookCount(),upmufluxGen->GetFailedMu_NuCount(),upmufluxGen->GetFailedMu_Count(),upmufluxGen->GetTeVCount());	  
+	  fprintf(stderr,"%i events failed EHook, %i events failed Mu_Nu, %i events faile Mu, %i events > 1 TeV\n",upmufluxGen->GetFailedEHookCount(),upmufluxGen->GetFailedMu_NuCount(),upmufluxGen->GetFailedMu_Count(),upmufluxGen->GetTeVCount());	  
 
 	  
 	}
     }
   else
     {
-      fprintf(stderr,"Creating Evt rate\n");
-      fluxGen->CreateEvtRate();
-      fprintf(stderr,"Created Evt rate\n");
-  
-      while(true)
-	{
-	  count++;
-	  if(count/10000>outCount)
-	    {
-	      outCount++;
-	      fprintf(stderr,"count %i\n",count);
-	    }
-	  int flxOut;
-	  if((flxOut=fluxGen->CreateNextVector())<0)
-	    {
-	      fprintf(stderr,"************Error CreateNextVector failed, quitting event loop*********\n");	      
-	      exit(1);
-	    }
-	  else if(flxOut==0)
-	    {
-	      //Rotate Coords
-	      //	      fluxGen->RotateCoords();
-	      //write out event
-	      if(fluxGen->WriteCurrentVector()<0)
-		{
-		  std::cout<<"Failed to write out event"<<std::endl;
-		  exit(1);
-		}
-	    }
-	  else if(flxOut==2)
-	    {
-	      //finished
-	      break;
-	    }
-	  //flxOut==1 skips writing event
-
-	    
-	}
+      fluxGen->Run();
     }
   fprintf(stderr,"All finished up %i \n",count);
   if(neutcardatm_.itau==1)

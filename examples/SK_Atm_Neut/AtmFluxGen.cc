@@ -31,6 +31,9 @@ extern "C"{
   void nemknpos_();
   void vcclfsicm_();
 
+  void necard_();
+  void nefillmodel_();
+  void nefillver_();
   //extern void mcmass_(int&,float&);
   //extern void kzeclr_();
   // extern void kzinit_();
@@ -63,6 +66,14 @@ AtmFluxGen::AtmFluxGen()
     //    e_thresh=0;
     // e_max=1000000000;
   }
+int AtmFluxGen::Setup()
+{
+  necard_();
+  nefillmodel_();
+  nefillver_();
+
+  return 0;
+}
  
 double AtmFluxGen::GetCrossSection(NEUTRINO::FLAVOR flav,float E)
 {

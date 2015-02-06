@@ -25,6 +25,7 @@ class FluxGen
 
   int LoadFluxTable(std::string flxFile);
   
+  void Run();
   int CreateEvtRate(){Time_Struct t(0,0);return CreateEvtRate(t);};
   int CreateEvtRate(Time_Struct t);
   int CreateNextVector(); // return 0 on success, 1 to skip writeout of this event, 2 if no more events left, -1 on error
@@ -48,6 +49,9 @@ class FluxGen
   void SetStartTime(Time_Struct t){startTime=t;};
   void SetEndTime(Time_Struct t){endTime=t;};
  protected:
+  virtual int Setup(){return 0;};//return 0 on success, negative on error
+  int OnlyOnceSetup();
+  void RunLoop();
   void RotateCoords(); //transforms from coords of flux generator to requested final coords
   int GetRandDirection(NEUTRINO::FLAVOR flav, float e, TVector3 * dir);
   virtual int GetRandDir(NEUTRINO::FLAVOR flav,float e,TVector3 * dir);
@@ -77,7 +81,7 @@ class FluxGen
   double e_thresh;
   double e_max;
 
-
+  bool hasBeenSetup;
   Time_Struct startTime,endTime;
   DetectorGeom* detector;
   TVector3 * vX;

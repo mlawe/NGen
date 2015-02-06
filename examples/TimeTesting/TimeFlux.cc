@@ -87,7 +87,7 @@ double TimeFlux::GetFlux(float E,NEUTRINO::FLAVOR nuFlav,Time_Struct t)
   double flx=1000.*e_fact*time_fact;
 
   return 30000.*flx;
-  
+
 
 
 

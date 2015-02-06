@@ -16,7 +16,7 @@ FluxGen::FluxGen()
   evtRate=NULL;
   detector=NULL;
   nYears=-1;
-
+  hasBeenSetup=false;
   vX=new TVector3(1,0,0);
   vY=new TVector3(0,1,0);
   vZ=new TVector3(0,0,1);
@@ -66,6 +66,67 @@ FluxGen::~FluxGen()
   delete vZ;
 }
 
+void FluxGen::Run()
+{
+  
+  if( OnlyOnceSetup()<0)
+    {
+      std::cout<<"FluxGen::Setup failed"<<std::endl;
+      exit(1);
+    }
+
+  CreateEvtRate(startTime);
+
+  RunLoop();
+}
+
+int FluxGen::OnlyOnceSetup()
+{
+  if(!hasBeenSetup)
+    {
+      hasBeenSetup=true;
+      return Setup();
+    }
+  return 0;
+
+}
+void FluxGen::RunLoop()
+{
+
+  while(true)
+    {
+      int flxOut;
+      if((flxOut=CreateNextVector())<0)
+	{
+	  fprintf(stderr,"************Error CreateNextVector failed, quitting event loop*********\n");	      
+	  exit(1);
+	}
+      else if(flxOut==0)
+	{
+	  //write out event
+	  if(WriteCurrentVector()<0)
+	    {
+	      std::cout<<"Failed to write out event"<<std::endl;
+	      exit(1);
+
+	    }
+
+	}
+      else if(flxOut==2)
+	{
+	  //finished
+	  break;
+	}
+      else
+	{
+	  //unexpected return
+	  std::cout<<"FluxGen::CreateNextVector unexpected return"<<std::endl;
+	  exit(1);
+	}
+      std::cout<<"FluxOut "<<flxOut;
+    }
+
+}
 
 int FluxGen::LoadFluxTable(std::string fluxFileN)
 {
@@ -226,7 +287,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 
 
   //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  fprintf(stderr,"evtRate %i\n",evtRate->all);
+  //fprintf(stderr,"evtRate %i\n",evtRate->all);
   
   return 0;
 }
@@ -312,6 +373,7 @@ int FluxGen::CreateNextVector()
 
   if(theTime>endTime) return 2;
 
+  std::cout<<"theTime "<<theTime.seconds<<" endTime "<<endTime.seconds<<std::endl;
   //load up new empty vetor
   
   /*  if(currentVect)
@@ -585,7 +647,7 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
 { 
   //This is basically a numerical inversion sampling to choose a bin and then metropolis to choose energy in that bin
  
-  std::cout<<"Using Stepping Energy techinqe"<<std::endl;
+  //  std::cout<<"Using Stepping Energy techinqe"<<std::endl;
   std::vector<double> fluxCSInt;
   switch(flav)
     {

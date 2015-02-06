@@ -26,7 +26,7 @@ class AtmFluxGen:public FluxGen
   AtmFluxGen();
   void SetEThresh(double eth){e_thresh=eth;};
   void SetEMax(double emax){e_max=emax;};
-
+  virtual int Setup();
  protected:
   //  double e_thresh;
   //  double e_max; //GeV
