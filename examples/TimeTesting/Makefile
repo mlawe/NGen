@@ -1,6 +1,6 @@
-CXX=g++
+CXX=clang++
 
-LD=g++
+LD=clang++
 
 NGEN = ../../
 

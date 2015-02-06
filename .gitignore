@@ -2,6 +2,7 @@ include/*
 lib/*
 src/*/*.[ao]
 examples/*/*
+setup.make
 !examples/*/*.cc
 !examples/*/*.c
 !examples/*/*.h
