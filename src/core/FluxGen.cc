@@ -269,14 +269,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
     }
   //  fprintf(stderr,"ratio %f\n",(fluxCSIntE[116]+fluxCSIntEBar[116]+fluxCSIntMu[116]+fluxCSIntMuBar[116])/(fluxCSIntE.back()+fluxCSIntMu.back()+fluxCSIntEBar.back()+fluxCSIntMuBar.back()));
   //fprintf(stderr,"tmpMurt %e tmpErt %e time %e pnum %e fidMass %e nYears %f\n",tmpMUrt,tmpErt, time,pnum,fidMass,nYears);
-  evtRate->e=(int)(tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4);//last two factors convert 1e-38 cm^2 units to m^2 units
-  evtRate->e_bar=(int)(tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->mu=(int)(tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->mu_bar=(int)(tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->tau_bar=(int)(tmpTAUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->tau=(int)(tmpTAUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  evtRate->all=evtRate->e+evtRate->e_bar+evtRate->mu+evtRate->mu_bar+evtRate->tau+evtRate->tau_bar;
-
+ 
   evtRate->e_rt=tmpErt*pnum*fidMass*1.e-38*1.e-4;//last two factors convert 1e-38 cm^2 units to m^2 units
   evtRate->e_bar_rt=tmpEBARrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->mu_rt=tmpMUrt*pnum*fidMass*1.e-38*1.e-4;
@@ -285,7 +278,10 @@ int FluxGen::CreateEvtRate(Time_Struct t)
   evtRate->tau_bar_rt=tmpTAUBARrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->total_rt=evtRate->e_rt+evtRate->e_bar_rt+evtRate->mu_rt+evtRate->mu_bar_rt+evtRate->tau_rt+evtRate->tau_bar_rt;
 
-
+  if(!flxTbl->IsTimeDependent())
+    {
+      evtRate->Times(time*nYears);
+    }
   //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   //fprintf(stderr,"evtRate %i\n",evtRate->all);
   
@@ -310,9 +306,28 @@ int FluxGen::CreateNextVector()
       fprintf(stderr,"Error: Event rates do not add up\n");
       return -1;
     }
-  if(evtRate->all==0 and !(flxTbl->IsTimeDependent()))
+  if(evtRate->total_rt<=0)
     {
-      return 2;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+	  return 2;
+	}
+      else
+	{
+	  std::cerr<<"Error in FluxGen::CreateNextVector negative rate for timedependent flux"<<std::endl;
+	  return -1;
+	}
+    }
+  else if(evtRate->total_rt<1 and !(flxTbl->IsTimeDependent()))
+    {
+      //choose whether to create anoth event or finish now
+      std::cout<<"evtRate <1: "<<evtRate->total_rt<<std::endl;
+      double test=rndm->Rndm();
+      if(test>evtRate->total_rt)
+	{
+	  //finish now
+	  return 2;
+	}
     }
   Time_Struct theTime=startTime;
   float evtN=0;
@@ -390,76 +405,84 @@ int FluxGen::CreateNextVector()
   Track* tmpTrack=currentVect->AddNewTrack();
 
   //now choose flavor
-  double test=rndm->Rndm();
-  double e_rt=(double)evtRate->e;
-  double e_bar_rt=(double)evtRate->e_bar;
-  double mu_rt=(double)evtRate->mu;
-  double mu_bar_rt=(double)evtRate->mu_bar;
-  double tau_rt=(double)evtRate->tau;
-  double tau_bar_rt=(double)evtRate->tau_bar;
-  double tot_rt=(double)evtRate->all;
-  if(flxTbl->IsTimeDependent())
-    {
-      e_rt=evtRate->e_rt;
-      e_bar_rt=evtRate->e_bar_rt;
-      mu_rt=evtRate->mu_rt;
-      mu_bar_rt=evtRate->mu_bar_rt;
-      tau_rt=evtRate->tau_rt;
-      tau_bar_rt=evtRate->tau_bar_rt;
-      tot_rt=evtRate->total_rt;
-    }
-  if(tot_rt!=e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt)
+  double e_rt=evtRate->e_rt;
+  double e_bar_rt=evtRate->e_bar_rt;
+  double mu_rt=evtRate->mu_rt;
+  double mu_bar_rt=evtRate->mu_bar_rt;
+  double tau_rt=evtRate->tau_rt;
+  double tau_bar_rt=evtRate->tau_bar_rt;
+  double tot_rt=evtRate->total_rt;
+  
+  if(std::abs(e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt-tot_rt)>0.0001)
     {
       std::cerr<<"Event rate error in FluxGen::CreateNextEvent"<<std::endl;
 
-      return 1;
+      return -1;
 
     }
-
+  double test=rndm->Rndm();
   double testFlav=test*tot_rt;
   NEUTRINO::FLAVOR flav;
   if(testFlav<=e_rt)
     {
       flav=NEUTRINO::E;
       tmpTrack->parID=12;
-      evtRate->e-=1;
-      evtRate->all-=1;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+	  evtRate->e_rt-=1;
+	  evtRate->total_rt-=1;
+	}
     }
   else if(testFlav<=(e_rt+e_bar_rt))
     {
       flav=NEUTRINO::E_BAR;
       tmpTrack->parID=-12;
-      evtRate->e_bar-=1;
-      evtRate->all-=1;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+      	  evtRate->e_bar_rt-=1;
+	  evtRate->total_rt-=1;
+	}
     }
   else if(testFlav<=(e_rt+e_bar_rt+mu_rt))
     {
       flav=NEUTRINO::MU;
       tmpTrack->parID=14;
-      evtRate->mu-=1;
-      evtRate->all-=1;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+	  evtRate->mu_rt-=1;
+	  evtRate->total_rt-=1;
+	}
     }
   else if(testFlav<=(e_rt+e_bar_rt+mu_rt+mu_bar_rt))
     {
       flav=NEUTRINO::MU_BAR;
       tmpTrack->parID=-14;
-      evtRate->mu_bar-=1;
-      evtRate->all-=1;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+	  evtRate->mu_bar_rt-=1;
+	  evtRate->total_rt-=1;
+	}
     }
   else if(testFlav<=(e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt))
     {
     
       flav=NEUTRINO::TAU;
       tmpTrack->parID=16;
-      evtRate->tau-=1;
-      evtRate->all-=1;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+	  evtRate->tau_rt-=1;
+	  evtRate->total_rt-=1;
+	}
     }
   else 
     {
       flav=NEUTRINO::TAU_BAR;
       tmpTrack->parID=-16;
-      evtRate->tau_bar-=1;
-      evtRate->all-=1;
+      if(!(flxTbl->IsTimeDependent()))
+	{
+	  evtRate->tau_bar_rt-=1;
+	  evtRate->total_rt-=1;
+	}
     }
 
 

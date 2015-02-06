@@ -10,15 +10,8 @@ class EvtRate
 
   bool Check();
 
-  int all;
-  int e;
-  int e_bar;
-  int mu;
-  int mu_bar;
-  int tau;
-  int tau_bar;
-
-  double total_rt;   //event rate in events per second
+  void Times(double); //mult all evt rate by factor
+  double total_rt;   //event rate.  If flux is time-dependent it is in Hz, if flux is time-independent it is total events to simulate
   double e_rt;
   double e_bar_rt;
   double mu_rt;

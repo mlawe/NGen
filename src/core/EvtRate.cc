@@ -1,14 +1,7 @@
 #include "EvtRate.h"
-
+#include <cmath>
 EvtRate::EvtRate()
 {
-  all=0;
-  e=0;
-  e_bar=0;
-  mu_bar=0;
-  mu=0;
-  tau=0;
-  tau_bar=0;
 
   total_rt=0;
   e_rt=0;
@@ -24,9 +17,21 @@ EvtRate::EvtRate()
 EvtRate::~EvtRate()
 {}
 
+void EvtRate::Times(double fact)
+{
+  e_rt*=fact;
+  e_bar_rt*=fact;
+  mu_rt*=fact;
+  mu_bar_rt*=fact;
+  tau_rt*=fact;
+  tau_bar_rt*=fact;
+  total_rt*=fact;
+  
+  
+}
 bool EvtRate::Check()
 {
-  if(e+e_bar+mu+mu_bar+tau+tau_bar==all and e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt==total_rt)
+  if(std::abs(e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt-total_rt)<0.0001)
     {
       return true;
     }
