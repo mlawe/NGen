@@ -1,0 +1,15 @@
+NGEN README
+
+C.Kachulis Feb. 9, 2015
+
+NGEN is an open source software package for neutrino event generation.
+
+To build, in setup.make set CXX to your desired compiler.
+
+Then in this top directory, type "make".
+
+This will install libraries into lib/, and copy headers into include/
+
+example applications can be found in the examples/ directory.
+
+For more information (User's Guide) see docs/ directory.
