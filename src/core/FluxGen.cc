@@ -513,7 +513,7 @@ int FluxGen::CreateNextVector()
       
 
       //run the incoming neutino through nuclear simulation!!!!!!!!!!!
-      int ret=ProcessIncomingTrack(tmpTrack);
+      int ret=ProcessIncomingTrack();
    
       if(ret<0)
 	{

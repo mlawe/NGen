@@ -83,23 +83,18 @@ int AtmFluxGen::Setup()
 double AtmFluxGen::GetCrossSection(NEUTRINO::FLAVOR flav,float E)
 {
   int iPar[6]={12,-12,14,-14,16,-16};
-  double ret=0;
+  double ret;
   
-  //  std::cerr<<"E is "<<E<<" parID is"<<iPar[flav]<<std::endl;
-  //std::cerr<<"E is "<<E<<std::endl;
   ret=fntotpau_(iPar[flav],E);
-    
 
   return ret;
-
-
 }
 
-int AtmFluxGen::ProcessIncomingTrack(Track *track)
+int AtmFluxGen::ProcessIncomingTrack()
 {
 
 
-
+  Track * track=currentVect->GetTrack(0);
   float pMom[3];
   
 
@@ -108,7 +103,7 @@ int AtmFluxGen::ProcessIncomingTrack(Track *track)
       pMom[i]=track->pdir[i]*track->momentum;
     }
   int iErr=0;
-  //nevectap_(track->parID,(float*)currentVect->vertex,pMom,&iErr);
+
   vcclfsicm_();
   std::cerr<<"parID: "<<track->parID<<std::endl;
   float pos[3];
@@ -116,8 +111,6 @@ int AtmFluxGen::ProcessIncomingTrack(Track *track)
   pos[1]=currentVect->vertex.Y();
   pos[2]=currentVect->vertex.Z();
   nevect_(track->parID,pos,pMom,&iErr);
-  //nevent_(track->parID,pMom,&iErr);
-  //necpnewk_((float*)currentVect->vertex);
 
   if(iErr>0)
     {
@@ -178,139 +171,6 @@ int AtmFluxGen::ProcessIncomingTrack(Track *track)
 	    }
 
 	}
-
-      //std::map<std::string, boost::any> testmap;
-
-      //testmap["testchar1"]=2.1;
-      //   tmpTrack->SetUserData<std::string>("testchar1","testchar1");
-      //tmpTrack->SetUserData<double>("testchar2",6.3);
-      //tmpTrack->SetUserData<std::string>("testchar1","yipeee!");
-      //std::cout<<"  AtmFluxGen:: testchar2: "<<tmpTrack->GetUserData<double>("testchar2")<<std::endl;
-      //std::cout<<"tmpTrack testchar1: "<<tmpTrack->GetUserData<std::string>("testchar1");
-      //std::cout<<"  tmpTrack testchar2: "<<tmpTrack->GetUserData<double>("testchar2")<<std::endl;
-      //  tmpTrack->UserData["testchar1"]=static_cast<std::string>("testchar1");
-      //tmpTrack->UserData["testchar2"]=3.6;
     }
-  /// Testing tau crash with zbs writer structure here.
-  /*  mcmkhd_();
-  mcmkmh_();
-  mcmkwt_();
-
-  nemknebk_((float*)currentVect->vertex);
-  
-  nemkmodelbk_();
-  
-  nemkcrsbk_();
-  //nemknpos_();
-  int lun=1;
-  if(lun>0)
-    {
-      //fprintf(stderr,"Really writing zbs\n");
-      //set neut commons correctly.  must be done in mutliple places because neut
-      //for nework
-      nework_.modene=currentVect->intType;
-      nework_.numne=(int)currentVect->GetNumTracks();
-      //for vcwork
-      vcwork_.nvc=currentVect->intType;
-
-      //      if(currentVect->GetUserData<bool>("data1")) std::cout<<"data1 true"<<std::endl;
-      //else std::cout<<"data1 false"<<std::endl;
-      //double *a=currentVect->GetUserData<double*>("arr");
-      //std::cout<<"arr[0]: "<<a[0]<<" arr[1]: "<<a[1]<<" arr[2]: "<<a[2]<<std::endl;
-      for(int i=0;i<3;i++)
-	{
-	   //for vcvrtx
-	  vcvrtx_.pvtxvc[0][i]=(float)currentVect->vertex[i];
-	  vcwork_.posvc[i]=(float)currentVect->vertex[i];     
-	}
-      //loopthrough particles
-      Track * tmpTrack;
-      for(size_t i=0;i<currentVect->GetNumTracks();i++)
-	{
-	  tmpTrack=new Track(*currentVect->GetTrack(i));
-	  //tmpTrack=currentVect->GetTrack(i);
-
-	  nework_.ipne[i]=tmpTrack->parID;
-	  vcwork_.ipvc[i]=tmpTrack->parID;
-	  for(int j=0;j<3;j++)
-	    {
-	      nework_.pne[i][j]=(float)tmpTrack->pdir[j]*tmpTrack->momentum/1000.; //nework is in GeV
-	      vcwork_.pvc[i][j]=(float)tmpTrack->pdir[j]*tmpTrack->momentum;//vcwork is in MeV
-
-	      //do i need to adjust other vcwork position variable (posivc,posfvc)?
-	    }
-
-	  //	  std::cout<<" ZBSWriter::  testchar1: "<<tmpTrack->GetUserData<std::string>("testchar1")<<std::endl;
-	  //std::cout<<" ZBSWriter::  testchar2: "<<tmpTrack->GetUserData<double>("testchar2")<<std::endl;
-	  //	  std::cout<<"testchar1: "<<tmpTrack->GetUserData<std::string>("testchar1");
-
-
-	}
-      
-      
-
-      vcmkvc_();
-      vcmkvx_();
-      nemkfsibk_();
-      nemknetarg_();
-      
-
-      //      kzwrit_(&lun);
-      kzeclr_();
-   
-      }*/
   return 0;
 }
-/*
-void AtmFluxGen::RotateCoords()
-{
-  //rotate coords from HKflux coords to HKsim coors.  last thing in event loop
-
-  //first rotate vertex
-  TVector3 * vect=new TVector3(currentVect->vertex[0], currentVect->vertex[1], currentVect->vertex[2]);
-  RotatePoint(vect);
-  currentVect->vertex[0]=vect->X();
-  currentVect->vertex[1]=vect->Y();
-  currentVect->vertex[2]=vect->Z();
-
-  //now rotate direction of all tracks
-  size_t nTracks=currentVect->GetNumTracks();
-  
-  for(size_t i=0;i<nTracks;i++)
-    {
-      Track * track=currentVect->GetTrack(i);
-
-      vect->SetX(track->pdir[0]);
-      vect->SetY(track->pdir[1]);
-      vect->SetZ(track->pdir[2]);
-
-      RotatePoint(vect);
-
-      track->pdir[0]=vect->X();
-      track->pdir[1]=vect->Y();
-      track->pdir[2]=vect->Z();
-
-    }
-
-  //done so clean up memory
-  delete vect;
-    
-}
-
-
-void AtmFluxGen::RotatePoint(TVector3 * v)
-{
-
-  v->RotateX(Pi/2.);
-
-  v->SetX(-v->X());
-
-  v->SetY(-v->Y());
-
-
-
-
-}
-*/
-
-
