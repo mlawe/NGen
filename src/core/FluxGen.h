@@ -67,7 +67,7 @@ class FluxGen
   virtual double GetCrossSection(NEUTRINO::FLAVOR flav, float E)=0;
 //return cross section in units of 10^-38 cm^2 nucleons^-1, E in units of GeV
   
-  virtual int ProcessIncomingTrack(Track* track) =0; //0 if successful, 1 to skip writeout,-1 on error
+  virtual int ProcessIncomingTrack() =0; //0 if successful, 1 to skip writeout,-1 on error
   
   void RotatePoint(TVector3 *v);
   float nYears;

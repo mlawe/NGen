@@ -45,7 +45,7 @@ private:
  bool kWrittenOut;
 
   std::vector<Track*> tracks;
-  size_t numTracks;
+
   std::map<std::string,boost::any> UserData;
 };
 
