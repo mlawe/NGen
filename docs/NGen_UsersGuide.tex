@@ -1,0 +1,129 @@
+\title{NGen User's Guide}
+\author{
+  Chris Kachulis\\
+  kachulis@bu.edu or cjkachulis@gmail.com
+}
+
+\date{\today}
+
+\documentclass[12pt]{article}
+
+
+\usepackage{listings}
+\usepackage[usenames,dvipsnames]{color} % Required for specifying custom colors and referring to colors by name
+
+\definecolor{DarkGreen}{rgb}{0.0,0.4,0.0} % Comment color
+\definecolor{highlight}{RGB}{255,251,204} % Code highlight color
+
+
+\lstdefinestyle{Style1}{ % Define a style for your code snippet, multiple definitions can be made if, for example, you wish to insert multiple code snippets using different programming languages into one document
+language=C++, % Detects keywords, comments, strings, functions, etc for the language specified
+backgroundcolor=\color{highlight}, % Set the background color for the snippet - useful for highlighting
+basicstyle=\footnotesize\ttfamily, % The default font size and style of the code
+breakatwhitespace=false, % If true, only allows line breaks at white space
+breaklines=true, % Automatic line breaking (prevents code from protruding outside the box)
+captionpos=t, % Sets the caption position: b for bottom; t for top
+commentstyle=\usefont{T1}{pcr}{m}{sl}\color{DarkGreen}, % Style of comments within the code - dark green courier font
+deletekeywords={}, % If you want to delete any keywords from the current language separate them by commas
+%escapeinside={\%}, % This allows you to escape to LaTeX using the character in the bracket
+firstnumber=1, % Line numbers begin at line 1
+frame=single, % Frame around the code box, value can be: none, leftline, topline, bottomline, lines, single, shadowbox
+frameround=tttt, % Rounds the corners of the frame for the top left, top right, bottom left and bottom right positions
+keywordstyle=\color{Blue}\bf, % Functions are bold and blue
+morekeywords={}, % Add any functions no included by default here separated by commas
+numbers=left, % Location of line numbers, can take the values of: none, left, right
+numbersep=10pt, % Distance of line numbers from the code box
+numberstyle=\tiny\color{Gray}, % Style used for line numbers
+rulecolor=\color{black}, % Frame border color
+showstringspaces=false, % Don't put marks in string spaces
+showtabs=false, % Display tabs in the code as lines
+stepnumber=5, % The step distance between line numbers, i.e. how often will lines be numbered
+stringstyle=\color{Purple}, % Strings are purple
+tabsize=2, % Number of spaces per tab in the code
+}
+
+% Create a command to cleanly insert a snippet with the style above anywhere in the document
+\newcommand{\insertcode}[4]{\begin{itemize}\item[]\lstinputlisting[caption=#2,label=#4,style=Style1,linerange=#3]{#1}\end{itemize}} % The first argument is the script location/filename and the second is a caption for the listing
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+NGen is a software package for neutrino vector generation for large single (of few) volume detecors.  This users guide will go over how to create an application to generate neutrino vectors using NGen.  Examples referenced in this guide can be found in NGen/examples.
+
+\section{Basic Structure}
+NGen is built around four abstract base classes which the User must inherit to write their application.  (Some useful child classes are included in the package and can be used by the User instead of inheriting their own).  Additionally two data classes hold information about the current event being produced.  This section will briefly introduce these six classes.  The basics required to use them to build an application will be in section \ref{sec:writeanapp}.
+  
+\subsection{The Four Abstract Base Classes}
+\label{sec:abc}
+\textbf{FluxGen (src/core/FluxGen.[h,cc]):}  FluxGen performs most of the heavy lifting of the simulation.   This is where the user must provide an interface with the chosen nuclear simulation code.  The user must also pass instances of child classes derived from the other three abstract base classes to their derived FluxGen child.
+\\
+\\
+\textbf{FlxTable (src/core/FlxTable.[h,cc]):}  FlxTable handles the information about the flux model being used.
+\\
+\\
+\textbf{DetectorGeom (src/core/DetectorGeom.[h,cc]):}  DetectorGeom handles the detector geometry, and the density of the material of the detector.  Some basic geometries are included in src/targets/.	
+\\
+\\
+\textbf{Writer (src/core/Writer.[h,cc]):} Writer handles writing the resulting data to output files in whatever format the User chooses.
+\\
+\\
+\subsection{The Two Data Classes}
+These two classes handle the vector currently being produced.  They are not intended to be inherited by the user, but the user is responsible for filling instances of them with information about the current event.  
+\\
+\\
+\\
+\textbf{EvtVector (src/core/EvtVector.[h,cc]):} EvtVector holds the information about the event, such as position, time, interaction code, etc.  It also has a field which is a vector of Tracks, which is where the information about particular particles in the event is stored.
+\\
+\\
+\textbf{Track (src/core/Track.[h,cc]):} Track is an individual particle involved in the event.  It holds all information about a particular particle.
+
+\section{Writing an Application: The Basics}
+\label{sec:writeanapp}
+In order to write an application, the User must inherit the four abstract base classes introduced in section \ref{sec:abc}.  I will shortly go through the pure virtual methods which must be overwritten by the user in their inherited child classes.  First, however, I will go into more detail about the two data classes.  Handling these two classes is a large part of the User's job in interfacing with the chosen nuclear simulator and writing out the data.
+\subsection{EvtVector}
+EvtVector has five basic data fields.  Of these five, four are set by methods in FluxGen without the User doing anything.  These are:\\
+\textbf{vertex:} The position of the event in cm.\\
+\textbf{evtTime:} The time of the event as a Time\_Struct object (see src/core/TimeStruct.h), which has a seconds and nanoseconds field.\\
+\textbf{evtNumber}: Incremented with each event that begins the generation process.\\
+ \textbf{evtWrittenNumber}: Incremented every time an event is written out (sometimes you may choose not to write out a particular event while you are producing it, and so the evtNumber will be incremented but not evtWrittenNumber.  This is all done automatically, the user doesn't need to worry about this).\\  
+In most cases the user will have no reason to change the values of these fields from whatever the methods in FluxGen has set them to.  However, there are some cases where a user may actually want to change these values, so they are left public.  Just make sure you know what you're doing if you decide to change them in your code.  Particularly messing with the evtTime field could lead to bad results if you don't understand exactly what you're doing.\\
+The fifth data field is the users responsibility.  It should be set by the User (see FluxGen::ProcessIncomingTrack() in Section \ref{sec:FG}.\\
+\textbf{intMode:} This holds the interaction mode of the event.  Although, unlike the other four fields, it is only ever touched by the user, so you could put a binary encoding of your shopping list here and the program would happily plug away oblivious to your practical joke.\\ 
+EvtVector additionally contains a vector of pointers to Track instances.  This is where the information about the individual particles in the event is stored.  The vector is private, and can be accessed and manipulated with three methods.  Note: The incoming neutrino track with all of it's basic information is stored as the first element of the vector.  The user is responsible for adding all additional particles.\\
+\texbf{Track * AddNewTrack():} Adds a new track(read: new particle) to the vector and returns a pointer to this newest track.\\
+\textbf{Track* GetTrack(size_t i):} Returns a pointer to the i'th track added.  If there is no i'th track (example: i=5 and there are only 3 tracks), then a NULL pointer is returned.\\
+\textbf{size_t GetNumTracks():} returns the number of tracks in the vector.
+\subsection{Track:}
+ 
+  
+
+
+\subsection{FluxGen}
+\label{sec:FG}	
+IMPORTANT:  The information about the current vector is held in the field FluxGen::currentVect which is a pointer to a EvtVector object.  The first Track in the currentVect is set to the incoming neutrino information of the base class, and can be accessed by the User with currentVect-\textgreater GetTrack(0).
+\textbf{Pure Virtual Methods}\\
+\\
+double GetCrossSection(NEUTRINO::FLAVOR flav, float E):   Return cross section of given neutrino flavor and given energy in units of $10^{-38} \textrm{cm}^2 / $ nucleon.  Energy (E) is given in GeV.   In the example below (examples/SK\_Atm\_Neut/AtmFluxGen.cc) fntotpau\_ 
+is the external call to the NEUT function which gives the neutrino cross section.
+
+\insertcode{../examples/SK_Atm_Neut/AtmFluxGen.cc}{AtmFluxGen::GetCrossSection}{82-92}{code:GXS}
+
+
+
+int ProcessIncomingTrack():  Process the incoming neutrino track (currentVect->GetTrack(0)) by running it through your nuclear simulator and recording resulting vector information in currentVect.  FluxGen will already have stored the vertex,evtTime, evtVumber, and evtWrittenNumber, as well as the basic information of the incoming neutrino (track 0).   Return 0 if successful and you want to write out the event, 1 if successfull but you do not want to write out the event, and -1 if there was an error (this will end the program). You must only set the interaction type, and add any additional particles to the vector.  For clarification I'll walk through List \ref{code:PIT} below from examples/SK\_Atm\_Neut/AtmFluxGen.cc.  NB. calls to "SetUserData" which are in the source file have been removed from the example here.  These calls set non-basic data specific to the user applications, and are explained in Section \ref{sec:userdata}.
+
+\insertcode{../examples/SK_Atm_Neut/AtmFluxGen.cc}{AtmFluxGen::ProcessIncomingTrack}{{93-122,135-140,155-176}}{code:PIT}
+ 
+
+
+
+
+\section{Writing an Application: Beyond the Basics}
+
+\subsection{User Defined Data}
+\label{sec:userdata}
+
+\end{document}
