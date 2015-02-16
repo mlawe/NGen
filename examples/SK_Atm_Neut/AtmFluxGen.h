@@ -35,7 +35,7 @@ class AtmFluxGen:public FluxGen
 
   //  float GetRandE(NEUTRINO::FLAVOR flav);
   virtual double GetCrossSection(NEUTRINO::FLAVOR flav,float E);
-  virtual int ProcessIncomingTrack(Track* track);
+  virtual int ProcessIncomingTrack();
 };
 
 
