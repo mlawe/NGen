@@ -16,6 +16,7 @@ FluxGen::FluxGen()
   evtRate=NULL;
   detector=NULL;
   nYears=-1;
+  POT=-1;
   hasBeenSetup=false;
   vX=new TVector3(1,0,0);
   vY=new TVector3(0,1,0);
@@ -155,6 +156,8 @@ void FluxGen::SetNYears(float y)
   nYears=y;
 }
 
+
+
 void FluxGen::SetDetector(DetectorGeom * t)
 {
   detector=t;
@@ -172,9 +175,9 @@ int FluxGen::CreateEvtRate(Time_Struct t)
       fprintf(stderr,"Error:Flux tables not loaded yet\n");
       return -1;
     }
-  if(nYears<0 and !(flxTbl->IsTimeDependent()))
+  if(nYears<0 and POT<0 and !(flxTbl->IsTimeDependent()))
     {
-      fprintf(stderr,"Error: nYears not set yet \n");
+      fprintf(stderr,"Error: nYears and POT not set yet and flux is not time dependent\n");
       return -1;
     }
   if(!detector)
@@ -278,9 +281,13 @@ int FluxGen::CreateEvtRate(Time_Struct t)
   evtRate->tau_bar_rt=tmpTAUBARrt*pnum*fidMass*1.e-38*1.e-4;
   evtRate->total_rt=evtRate->e_rt+evtRate->e_bar_rt+evtRate->mu_rt+evtRate->mu_bar_rt+evtRate->tau_rt+evtRate->tau_bar_rt;
 
-  if(!flxTbl->IsTimeDependent())
+  if(!flxTbl->IsTimeDependent() and nYears>0)
     {
       evtRate->Times(time*nYears);
+    }
+  else if(!flxTbl->IsTimeDependent() and POT>0)
+    {
+      evtRate->Times(POT);
     }
   //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   //fprintf(stderr,"evtRate %i\n",evtRate->all);

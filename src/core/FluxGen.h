@@ -35,6 +35,7 @@ class FluxGen
   void SetSeed(unsigned seed);
   void SetDetector(DetectorGeom* t);
   void SetNYears(float y);
+  void SetPOT(float pot){POT=pot;};
   void SetFlxTable(FlxTable* tbl);
   void SetvX(TVector3 v){vX->SetXYZ(v.X(),v.Y(),v.Z());};//x-unit vector of final coordinates in generator coords
   void SetvY(TVector3 v){vY->SetXYZ(v.X(),v.Y(),v.Z());};//y-unit vector of final coordinates in generator coords
@@ -71,6 +72,7 @@ class FluxGen
   
   void RotatePoint(TVector3 *v);
   float nYears;
+  float POT; //protons on target, for beam, units  of 10e20
   TRandom3 * rndm;
 
   EvtRate * evtRate;
