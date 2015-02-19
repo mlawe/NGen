@@ -23,7 +23,7 @@ class FluxGen
   
   virtual ~FluxGen();
 
-  int LoadFluxTable(std::string flxFile);
+
   
   void Run();
   int CreateEvtRate(){Time_Struct t(0,0);return CreateEvtRate(t);};

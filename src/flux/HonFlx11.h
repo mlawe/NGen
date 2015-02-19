@@ -35,7 +35,7 @@ public:
 
   //cosZ is also direction of neutrino momentum, measured from up.  so cosZ=+1 is an upward going neutrino, cosZ=-1 is downward going
  
-  int LoadFluxTable(std::ifstream& fileStrm);
+  int LoadFluxTable(std::string);
  
   std::vector<float> GetEnergyBins();
 

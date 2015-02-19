@@ -385,9 +385,10 @@ double HonFlx::GetFlux(float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
 }
 
 
- int HonFlx::LoadFluxTable(std::ifstream& fileStrm)
+ int HonFlx::LoadFluxTable(std::string fileName)
  {
-
+   std::ifstream fileStrm;
+   fileStrm.open(fileName.c_str());
    //check if filestream open
    if(!fileStrm.is_open())
      {
@@ -552,6 +553,7 @@ double HonFlx::GetFlux(float cosZ,float E,NEUTRINO::FLAVOR nuFlav)
      {
        FillIntegratedTables();
      }
+   fileStrm.close();
    return 0;
  }
 

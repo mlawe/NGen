@@ -162,7 +162,7 @@ int main(int argc,char * argv[])
       inFile.getline(s,300);
       std::cout<<s<<std::endl;
       fprintf(stderr,s);
-      if(fluxGen->LoadFluxTable(s)<0)
+      if(flx->LoadFluxTable(s)<0)
 	{
 	  fprintf(stderr,"Gen\n");
 	  break;

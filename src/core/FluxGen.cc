@@ -129,21 +129,6 @@ void FluxGen::RunLoop()
 
 }
 
-int FluxGen::LoadFluxTable(std::string fluxFileN)
-{
-  if(!flxTbl)
-    {
-      fprintf(stderr,"Error:no flux table set\n");
-      return -1;
-    }
-  
-  std::ifstream fileStrm;
-  fileStrm.open(fluxFileN.c_str());
-  int ret=flxTbl->LoadFluxTable(fileStrm);
-  fileStrm.close();
-  return ret;
-}
-
 
 void FluxGen::SetSeed(unsigned seed)
 {

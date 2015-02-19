@@ -9,6 +9,7 @@
 #include <vector>
 #include "TimeStruct.h"
 #include "TVector3.h"
+#include <string>
 class FlxTable
 {
 
@@ -22,7 +23,7 @@ class FlxTable
   //return flux in units of (m^2 sec GeV sr)^-1, E is in GeV, direction is reffering to direction neutrino is traveling, opposite from direction is came.  For beam flux you should probably have this method make an exit call and print out an error message. Call FluxGen::SetDirMode(1), to get direction from this flux table instead.  In this mode, this method will never be called
   virtual bool IsTimeDependent(){return false;}; //Is the flux time dependent?
   virtual Time_Struct GetNextRecalcTime(Time_Struct t1){Time_Struct t;return t;};  //When do we need to recalc EvtRates if last calced at t1?
-  virtual int LoadFluxTable(std::ifstream& fileStrm) =0;
+  virtual int LoadFluxTable(std::string){std::cout<<"FlxTable::LoadFluxTable not defined, should not be called"<<std::endl; return -1;};
   virtual int GetRandDir(NEUTRINO::FLAVOR, float, TVector3 * dir);
   virtual std::vector<float> GetEnergyBins() =0;
   //units are GeV
