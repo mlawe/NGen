@@ -7,5 +7,7 @@ setup.make
 !examples/*/*.F
 !examples/*/*.h
 !examples/*/Makefile
+!examples/*/setup.sh
+!examples/*/setup.sh
 *~
 *#
