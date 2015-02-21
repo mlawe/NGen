@@ -28,7 +28,7 @@ void NuanceWriter::WriteVector(EvtVector * evtVect)
 	fprintf(file,"$ vertex   %f   %f   %f     dummy \n",evtVect->vertex.X(),evtVect->vertex.Y(),evtVect->vertex.Z());
 
 	int num=(int)evtVect->GetNumTracks();
-	int mid;
+	int mid=0;
 	for(int i=0;i<num;i++)
 	  {
 	   

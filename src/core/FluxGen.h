@@ -72,7 +72,7 @@ class FluxGen
   
   void RotatePoint(TVector3 *v);
   float nYears;
-  float POT; //protons on target, for beam, units  of 10e20
+  float POT; //protons on target, for beam, units  of 1.0e20
   TRandom3 * rndm;
 
   EvtRate * evtRate;
