@@ -20,6 +20,7 @@ void RootWriter::OpenFile(std::string fileName)
       t->Branch("momentum",momentum,"momentum[numTracks]/F");
       t->Branch("pdir",pdir,"pdir[numTracks][3]/F");
       t->Branch("time",&time,"time/F");
+      t->Branch("status",&status,"status[numTracks]/I");
       SetupHook();
     }
 }
@@ -38,6 +39,7 @@ void RootWriter::WriteVector(EvtVector * evtVect)
 
       for(int i=0;i<numTracks;i++)
 	{
+	  status[i]=evtVect->GetTrack((size_t)i)->status;
 	  parID[i]=evtVect->GetTrack((size_t)i)->parID;
 	  mass[i]=evtVect->GetTrack((size_t)i)->mass;
 	  momentum[i]=evtVect->GetTrack((size_t)i)->momentum;

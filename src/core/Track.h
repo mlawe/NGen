@@ -20,7 +20,8 @@ class Track
   float mass;//in MeV
   float momentum;//in MeV
   TVector3 pdir;
-  
+  int status;
+
   ~Track();
   template<typename T>
     void SetUserData(std::string,T);

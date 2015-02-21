@@ -27,25 +27,27 @@ void NuanceWriter::WriteVector(EvtVector * evtVect)
 	fprintf(file,"$ neut    %i \n",evtVect->intType); //find interactiontype!
 	fprintf(file,"$ vertex   %f   %f   %f     dummy \n",evtVect->vertex.X(),evtVect->vertex.Y(),evtVect->vertex.Z());
 
-	int num=std::min(2,(int)evtVect->GetNumTracks());
+	int num=(int)evtVect->GetNumTracks();
+	int mid;
 	for(int i=0;i<num;i++)
 	  {
 	   
-
-	    fprintf(file,"$ track   %10i   %10.5f   %10.5f   %10.5f   %10.5f   -1 \n",evtVect->GetTrack(i)->parID,evtVect->GetTrack(i)->momentum,evtVect->GetTrack(i)->pdir[0],evtVect->GetTrack(i)->pdir[1],evtVect->GetTrack(i)->pdir[2]);
+	    if(evtVect->GetTrack(i)->status!=-1)
+	      {
+		mid=i;
+		break;
+	      }
+	    fprintf(file,"$ track   %10i   %10.5f   %10.5f   %10.5f   %10.5f   %i \n",evtVect->GetTrack(i)->parID,evtVect->GetTrack(i)->momentum,evtVect->GetTrack(i)->pdir[0],evtVect->GetTrack(i)->pdir[1],evtVect->GetTrack(i)->pdir[2],evtVect->GetTrack(i)->status);
 
 	    
 	  }
 	fprintf(file,"$ info event: %i \n",evtVect->evtWrittenNumber);
 
 
-	for(int j=0;j<2;j++)
+	for(int j=mid;j<num;j++)
 	  {
-	    int k=-2+2*j;
-	    for(size_t i=2;i<evtVect->GetNumTracks();i++)
-	      {
 
-		  fprintf(file,"$ track   %10i   %10.5f   %10.5f   %10.5f   %10.5f   %i \n",evtVect->GetTrack(i)->parID,evtVect->GetTrack(i)->momentum,evtVect->GetTrack(i)->pdir[0],evtVect->GetTrack(i)->pdir[1],evtVect->GetTrack(i)->pdir[2],k);
+	    fprintf(file,"$ track   %10i   %10.5f   %10.5f   %10.5f   %10.5f   %i \n",evtVect->GetTrack(j)->parID,evtVect->GetTrack(j)->momentum,evtVect->GetTrack(j)->pdir[0],evtVect->GetTrack(j)->pdir[1],evtVect->GetTrack(j)->pdir[2],evtVect->GetTrack(j)->status);
 	  
 		
 	      }
@@ -58,10 +60,10 @@ void NuanceWriter::WriteVector(EvtVector * evtVect)
 	
 
 
-    }
+}
   
 
-}
+
 
 
 void NuanceWriter::CloseFile()

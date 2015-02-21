@@ -30,7 +30,7 @@ class RootWriter: public Writer
   float momentum[200];
   float pdir[200][3];
   float time;
-
+  int status[200];
 };
 
 #endif
