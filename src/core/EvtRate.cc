@@ -33,8 +33,10 @@ bool EvtRate::Check()
 {
   if(std::abs(e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt-total_rt)<0.0001)
     {
+
       return true;
     }
+  std::cout<<e_rt+e_bar_rt+mu_rt+mu_bar_rt+tau_rt+tau_bar_rt<<"  "<<total_rt<<std::endl;
   return false;
 
 }

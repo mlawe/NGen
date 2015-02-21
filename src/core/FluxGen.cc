@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stdlib.h>
 
+
 #ifndef __PI__
 #define __PI__
 const double Pi=4.0*atan(1.0);
@@ -76,7 +77,11 @@ void FluxGen::Run()
       exit(1);
     }
 
-  CreateEvtRate(startTime);
+  if(CreateEvtRate(startTime)<0)
+    {
+      std::cout<<"FluxGen::CreateEvtRate() failed"<<std::endl;
+      exit(1);
+    }
 
   RunLoop();
 }
@@ -249,6 +254,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
       tmpMUBARrt+=fCSMUBAR*ebin;
       tmpTAUrt+=fCSTAU*ebin;
       tmpTAUBARrt+=fCSTAUBAR*ebin;
+   
       /*      if(E<10)
 	{
 	  fprintf(stderr,"E= %f,tmpMUBARrt = %f\n",E,tmpMUBARrt*time*pnum*1.e-38*1.e-4);
@@ -272,11 +278,12 @@ int FluxGen::CreateEvtRate(Time_Struct t)
     }
   else if(!flxTbl->IsTimeDependent() and POT>0)
     {
+
       evtRate->Times(POT);
     }
-  //  fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
-  //fprintf(stderr,"evtRate %i\n",evtRate->all);
-  
+  //fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
+  //  fprintf(stderr,"evtRate %f\n",evtRate->total_rt);
+  std::cout<<"EVTRATE*********"<<evtRate->total_rt<<std::endl;
   return 0;
 }
 
