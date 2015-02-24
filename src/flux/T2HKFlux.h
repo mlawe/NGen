@@ -1,27 +1,18 @@
 #ifndef _T2HKFlux_
 #define _T2HKFlux_
 
-#include "FlxTable.h"
+#include "BeamFlux.h"
 #include "TSpline.h"
 
-class T2HKFlux:public FlxTable
+class T2HKFlux:public BeamFlux
 {
  public:
 
-  ~T2HKFlux(){cdf_splines.clear();}
-  virtual double GetFlux(float E,NEUTRINO::FLAVOR flav,Time_Struct t);
-  virtual double GetFlux(float phi,float cosZ,float E, NEUTRINO::FLAVOR flav,Time_Struct t);
+  int GetRandDir(NEUTRINO::FLAVOR, float, TVector3 *);
 
-  virtual int GetRandDir(NEUTRINO::FLAVOR, float, TVector3 *);
+  std::vector<float> GetEnergyBins();
 
-  virtual std::vector<float> GetEnergyBins();
-
-  virtual int LoadFluxTable(std::string);
- protected:
-  int LoadFluxFromTxt(std::string);
-  int LoadFluxFromRoot(std::string);
-  std::vector<TSpline3*> cdf_splines;
-  
+  bool CheckFileFormat(std::string);
 
 };
 
