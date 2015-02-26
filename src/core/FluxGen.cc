@@ -284,6 +284,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
   //fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   //  fprintf(stderr,"evtRate %f\n",evtRate->total_rt);
   std::cout<<"EVTRATE*********"<<evtRate->total_rt<<std::endl;
+  EVec.clear();
   return 0;
 }
 

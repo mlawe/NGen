@@ -1,7 +1,7 @@
 include ../../setup.make
 
-OBJS = HKTank.o TargetCyl.o TargetSphere.o TargetSphereTrunc.o
-INCFILES = HKTank.h TargetCyl.h TargetSphere.h TargetSphereTrunc.h
+OBJS = HKTank.o TargetCyl.o TargetSphere.o TargetSphereTrunc.o DGBox.o
+INCFILES = HKTank.h TargetCyl.h TargetSphere.h TargetSphereTrunc.h DGBox.h
 
 LIBDIR= ../../lib
 INCDIR= ../../include/

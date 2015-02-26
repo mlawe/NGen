@@ -4,7 +4,8 @@
 #include "TimeGen.h"
 #include "RootWriter.h"
 #include "TargetCyl.h"
-
+#include "NuanceWriter.h"
+#include "NullWriter.h"
 int main(int argc, char * argv[])
 {
 
@@ -13,7 +14,7 @@ int main(int argc, char * argv[])
   TimeFlux * flux=new TimeFlux();
 
   RootWriter * writer=new RootWriter();
-
+  //NullWriter * writer=new NullWriter();
   TargetCyl * sk=new TargetCyl();
   sk->SetR(19.65);
   sk->SetHeight(41.40);
@@ -23,9 +24,9 @@ int main(int argc, char * argv[])
   gen->SetDetector(sk);
 
   gen->SetFlxTable(flux);
-  gen->LoadFluxTable("");
+  
 
-  gen->AddNewWriter(writer,"TimeFluxTest.root");
+  gen->AddNewWriter(writer,"TimeFluxTest.txt");
   
   Time_Struct start(0,0);
   Time_Struct end(20,0);

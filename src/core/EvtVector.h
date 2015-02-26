@@ -20,7 +20,12 @@ public:
 
   ~EvtVector()
   {
+    for(size_t i=0;i<tracks.size();i++)
+      {
+	delete (tracks[i]);
+      }
     tracks.clear();
+    UserData.clear();
   }
   
   Track * AddNewTrack();
