@@ -21,6 +21,15 @@ void Time_Struct::Zero()
 
 }
 
+double Time_Struct::Val()
+{
+  double ret=double(seconds)+double(nanoseconds)*1.0e-9;
+
+  return ret;
+
+
+}
+
 void Time_Struct::Check()
 {
   //  std::cout<<"Check"<<std::endl;

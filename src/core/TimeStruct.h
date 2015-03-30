@@ -11,7 +11,7 @@ struct Time_Struct{
   void Zero();
   //void SetTime(double t);
   void Check();
-
+  double Val();
   
   Time_Struct& operator+=(const Time_Struct & t);
   Time_Struct& operator-=(const Time_Struct &t);
