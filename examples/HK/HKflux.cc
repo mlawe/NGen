@@ -83,11 +83,21 @@ int main(int argc,char * argv[])
 	}
     } 
 
+  /*  struct stat buffer;   
+  neutcard_.itauflgcore=1;
+  if (!(stat ("supersim.card", &buffer) == 0))
+    {
+      char cmnd[100];
+      sprintf(cmnd,"cp %s supersim.card",c);
+      system(cmnd);
+    }
+  */
   //Setup Detectors
   TargetCyl * hk_cyl=new TargetCyl();
   hk_cyl->SetR(19.65);
   hk_cyl->SetHeight(41.40);
  
+
  
  
   HKTank *hk_long_egg=new HKTank();
@@ -276,7 +286,7 @@ int main(int argc,char * argv[])
     }
 
   //Set Coordinate system  
-  double angle=40.583;
+  /*double angle=40.583;
   double angleR=angle*Pi/180.;
   TVector3 vX(-cos(angleR),sin(angleR),0);
   TVector3 vY(-sin(angleR),-cos(angleR),0);
@@ -284,7 +294,7 @@ int main(int argc,char * argv[])
   fluxGen->SetvX(vX);
   fluxGen->SetvY(vY);
   fluxGen->SetvZ(vZ);
-
+*/
 
   //Setup output
   ifstream outFile(argv[3]);

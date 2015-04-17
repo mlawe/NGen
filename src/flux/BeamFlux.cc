@@ -34,7 +34,7 @@ int BeamFlux::LoadFluxTable(std::string fileName)
   fileStrm.getline(line,300);//first line is title and source
   if(!CheckFileFormat(line))
     {
-      std::cout<<"file "<<fileName<<"not correct format for Beam flux"<<std::endl;
+      std::cout<<"file "<<fileName<<" with first line: '"<<line<<"' not correct format for Beam flux"<<std::endl;
       return -1;
     }
   fileStrm.getline(line,300);//second line is heading

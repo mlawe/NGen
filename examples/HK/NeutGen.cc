@@ -128,7 +128,15 @@ int NeutGen::ProcessIncomingTrack()
   track->SetUserData<float>("posfvc_y",vcwork_.posfvc[0][1]);
   track->SetUserData<float>("posfvc_z",vcwork_.posfvc[0][2]);
   track->SetUserData<int>("ivtfvc",vcwork_.ivtfvc[0]);
-  track->status=vcwork_.iflgvc[0];
+  if(vcwork_.iflgvc[0]<0)
+    track->status=-1;
+  else if(vcwork_.icrnvc[0]==1 )
+    track->status=0;
+  else
+    track->status=-2;
+
+  //  track->status=vcwork_.iflgvc[0];
+  //std::cout<<"track->status: "<<track->status<<std::endl;
   Track * tmpTrack;
   //  Track * testTrack=currentVect->AddNewTrack();
   //testTrack->UserData["test"]=4.755;
@@ -137,7 +145,16 @@ int NeutGen::ProcessIncomingTrack()
       tmpTrack=currentVect->AddNewTrack();
       tmpTrack->SetUserData<int>("iorgvc",vcwork_.iorgvc[i]);
       //tmpTrack->SetUserData<int>("iflgvc",vcwork_.iflgvc[i]);
-      tmpTrack->status=vcwork_.iflgvc[i];
+  
+      if(vcwork_.iflgvc[i]<0)
+	tmpTrack->status=-1;
+      else if(vcwork_.icrnvc[i]==1)
+	tmpTrack->status=0;
+      else
+	tmpTrack->status=-2;
+  
+      //  tmpTrack->status=vcwork_.iflgvc[i];
+      //  std::cout<<"track->status: "<<track->status<<std::endl;
       tmpTrack->SetUserData<int>("icrnvc",vcwork_.icrnvc[i]);
       tmpTrack->SetUserData<float>("timvc",vcwork_.timvc[i]);
       tmpTrack->SetUserData<float>("posivc_x",vcwork_.posivc[i][0]);

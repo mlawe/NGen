@@ -255,6 +255,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
       tmpTAUrt+=fCSTAU*ebin;
       tmpTAUBARrt+=fCSTAUBAR*ebin;
    
+      //      std::cout<<"tmpErt "<<tmpErt<<" fCSE: "<<fCSE<<" ebin: "<<ebin<<std::endl;
       /*      if(E<10)
 	{
 	  fprintf(stderr,"E= %f,tmpMUBARrt = %f\n",E,tmpMUBARrt*time*pnum*1.e-38*1.e-4);
@@ -283,7 +284,8 @@ int FluxGen::CreateEvtRate(Time_Struct t)
     }
   //fprintf(stderr,"e %f e_bar %f, mu %f mubar %f\n",tmpErt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpEBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUrt*time*pnum*fidMass*nYears*1.e-38*1.e-4,tmpMUBARrt*time*pnum*fidMass*nYears*1.e-38*1.e-4);
   //  fprintf(stderr,"evtRate %f\n",evtRate->total_rt);
-  std::cout<<"EVTRATE*********"<<evtRate->total_rt<<std::endl;
+  std::cout<<"@ time "<<t.seconds<<" "<<t.nanoseconds<<" EVTRATE*********";
+  fprintf(stdout,"%e \n",evtRate->total_rt);
   EVec.clear();
   return 0;
 }
@@ -292,7 +294,7 @@ int FluxGen::CreateEvtRate(Time_Struct t)
 int FluxGen::CreateNextVector()
 {
 
-
+  
   if(!evtRate)
     {
       fprintf(stderr,"Error in CreateNextVector(): evtRate not yet filled\n");

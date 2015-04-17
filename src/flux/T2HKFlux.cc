@@ -22,7 +22,7 @@ std::vector<float> T2HKFlux::GetEnergyBins()
 
 int T2HKFlux::GetRandDir(NEUTRINO::FLAVOR flav, float E, TVector3 * dir)
 {
-  dir->SetXYZ(1,0,0);
+  dir->SetXYZ(0.669764,-0.742179,0.024223);
   return 0;
 }
 

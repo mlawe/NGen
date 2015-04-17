@@ -3,14 +3,14 @@
 
 void NeutRootWriter::SetupHook()
 {
-  t->Branch("iorgvc",&iorgvc,"iorgvc[numTracks]/I");
-  //  t->Branch("iflgvc",&iflgvc,"iflgvc[numTracks]/I");
-  t->Branch("icrnvc",&icrnvc,"icrnvc[numTracks]/I");
-  t->Branch("timvc",&timvc,"timvc[numTracks]/F");
-  t->Branch("ivtivc",&ivtivc,"ivtivc[numTracks]/I");
-  t->Branch("ivtfvc",&ivtfvc,"ivtfvc[numTracks]/I");
-  t->Branch("posivc",&posivc,"posivc[numTracks][3]/F");
-  t->Branch("posfvc",&posfvc,"posfvc[numTracks][3]/F");
+  t->Branch("iorgvc",&iorgvc,"iorgvc[200]/I");
+  //  t->Branch("iflgvc",&iflgvc,"iflgvc[200]/I");
+  t->Branch("icrnvc",&icrnvc,"icrnvc[200]/I");
+  t->Branch("timvc",&timvc,"timvc[200]/F");
+  t->Branch("ivtivc",&ivtivc,"ivtivc[200]/I");
+  t->Branch("ivtfvc",&ivtfvc,"ivtfvc[200]/I");
+  t->Branch("posivc",&posivc,"posivc[200][3]/F");
+  t->Branch("posfvc",&posfvc,"posfvc[200][3]/F");
 
 }
 
