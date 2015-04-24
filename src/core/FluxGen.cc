@@ -602,6 +602,7 @@ int FluxGen::GetRandDir(NEUTRINO::FLAVOR flav,float e,TVector3* dir)
 }
 float FluxGen::GetRandE(NEUTRINO::FLAVOR flav)
 {
+
   switch(EMode)
     {
     case 0:
@@ -666,13 +667,13 @@ float FluxGen::GetRandEInversion(NEUTRINO::FLAVOR flav)
 	}
       if(flxCS>rndm->Rndm()*test) break;
     }
+
   return e;
 }
 float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
 { 
   //This is basically a numerical inversion sampling to choose a bin and then metropolis to choose energy in that bin
  
-  //  std::cout<<"Using Stepping Energy techinqe"<<std::endl;
   std::vector<double> fluxCSInt;
   switch(flav)
     {
@@ -703,7 +704,6 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
   for(int i=0;i<(int)fluxCSInt.size();i++)
     {
       //      fprintf(stderr,"%e   %e\n",fluxCSInt[i],fluxCSInt.back());
-      //      std::cout<<fluxCSInt[i]<<"  "<<fluxCSInt.back()<<std::endl;
       if(r<fluxCSInt[i])
 	{
 	  iEbin=i;
@@ -733,11 +733,13 @@ float FluxGen::GetRandEStepping(NEUTRINO::FLAVOR flav)
     }  
   float e;
 
+
   while(true)
     {
 
       e=rndm->Rndm()*(emax-emin)+emin;
-      if(flxTbl->GetFlux(e,flav,currentVect->evtTime)*GetCrossSec(flav,e)>rndm->Rndm()*test)
+
+     if(flxTbl->GetFlux(e,flav,currentVect->evtTime)*GetCrossSec(flav,e)>rndm->Rndm()*test)
 	{
 	  break;
 	}

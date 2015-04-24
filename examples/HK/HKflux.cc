@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 /* 
 Simulation to create atmospheric netutrino event vectors for SK, using Honda Flux (or other) 
 tables and NEUT neutrino event generator.
@@ -6,7 +6,7 @@ tables and NEUT neutrino event generator.
 Begun: Feb 05,2014-C. Kachulis
 
 *//////////////////////////////////////////////////////////////// 
-#include "NeutGen.h"
+
 #include <cstdio>
 #include <stdlib.h>
 #include "TargetCyl.h"
@@ -19,10 +19,19 @@ Begun: Feb 05,2014-C. Kachulis
 #include "NuanceWriter.h"
 #include "NeutRootWriter.h"
 #include "DiffShape.h"
+#include <fstream>
+#include <string>
+#ifdef NEUT
+#include "NeutGen.h"
 #include "necardatmC.h"
 #include "nesolactC.h"
 #include "necardC.h"
 #include "UpMuFluxGen.h"
+#else
+#ifdef GENIE
+#include "GenieFluxGen.h"
+#endif
+#endif
 #include "HKTank.h"
 #include <sys/stat.h>
 #include "T2HKFlux.h"
@@ -47,7 +56,13 @@ int main(int argc,char * argv[])
 {
   if(argc<4)
     {
+#ifdef NEUT
       fprintf(stderr,"Input format is ./atmflux infiles.txt neut.card outfiles.txt |job #  seed| \n");
+#else
+#ifdef GEINIE
+      fprintf(stderr,"Input format is ./atmflux infiles.txt genie_in.txt outfiles.txt |job #  seed| \n");
+#endif
+#endif
       return 0;
     }
   if(argc==5)
@@ -58,11 +73,19 @@ int main(int argc,char * argv[])
     }
   /* Input is three files:
      1: txt List of input flux data files
-     2: NEUT Card
+     2: NEUT Card, or settings text file for genie
      3: txt List of output files
      4: (optional) job #
   */
 
+  int iDetector=0;
+  int fluxType=1;
+  int itau=0;
+  int imode=0;
+  float neyears=0;
+  float pot=0;
+  float solact=0;
+#ifdef NEUT
   char c[100];
   sprintf(c,"%s",argv[2]);
   unsigned int len=strlen(c);
@@ -82,7 +105,45 @@ int main(int argc,char * argv[])
 	  system(cmnd);
 	}
     } 
+  iDetector=neutcardatm_.iDetector;
+  fluxType=neutcardatm_.fluxType;
+  itau=neutcardatm_.itau;
+  imode=neutcardatm_.imode;
+  neyears=neutcardatm_.neyears;
+  pot=neutcardatm_.pot;
+  solact=nesolact_.solact;
+#else
+#ifdef GENIE
+  std::ifstream settings_file;
+  settings_file.open(argv[2]);
+  float val;
+  std::string key;
+  char c[100];
+  while(settings_file.good() and !settings_file.eof())
+    {
+      settings_file>>key>>val;
+      settings_file.getline(c,100);
+      if(key=="iDetector") iDetector=(int)val;
+      else if(key=="fluxType") fluxType=(int)val;
+      else if(key=="itau") itau=(int)val;
+      else if(key=="imode") imode=(int)val;
+      else if(key=="neyears") neyears=val;
+      else if(key=="pot") pot=val;
+      else if(key=="solact") solact=val;
 
+      if(settings_file.bad()) 
+	{
+	  std::cout<<"Error reading in settings from file"<<std::endl;
+	  return 0;
+	}
+    }
+  if(imode==1)
+    {
+      std::cout<<"UpMu not available with genie yet, sorry"<<std::endl;
+      return 0;
+    }
+#endif
+#endif
   /*  struct stat buffer;   
   neutcard_.itauflgcore=1;
   if (!(stat ("supersim.card", &buffer) == 0))
@@ -104,7 +165,7 @@ int main(int argc,char * argv[])
 
   DetectorGeom * hk;
   //Set hk according to neutcardatm_.iDetector
-  switch(neutcardatm_.iDetector)
+  switch(iDetector)
     {
     case 0:
       hk=hk_long_egg;
@@ -113,7 +174,7 @@ int main(int argc,char * argv[])
       hk=hk_cyl;
       break;
     default:
-      std::cout<<"Detector type "<<neutcardatm_.iDetector<<" invalid"<<std::endl;
+      std::cout<<"Detector type "<<iDetector<<" invalid"<<std::endl;
       return 0;
     }
   hk->SetDensity(1.E3); //kg/m^3
@@ -126,77 +187,77 @@ int main(int argc,char * argv[])
   HonFlx* honFlx=new HonFlx(); //HONDA 06
   HonFlxTau* honFlxtau=new HonFlxTau();
   HonFlxUpMu * honFlxUpMu=new HonFlxUpMu();
-  honFlx->SetSolarAct(nesolact_.solact);
-  honFlxtau->SetSolarAct(nesolact_.solact);
-  honFlxUpMu->SetSolarAct(nesolact_.solact);
+  honFlx->SetSolarAct(solact);
+  honFlxtau->SetSolarAct(solact);
+  honFlxUpMu->SetSolarAct(solact);
   
   HonFlx11* honFlx11=new HonFlx11(); //HONDA 11
   HonFlx11Tau* honFlx11tau=new HonFlx11Tau();
   HonFlx11UpMu * honFlx11UpMu=new HonFlx11UpMu();
-  honFlx11->SetSolarAct(nesolact_.solact);
-  honFlx11tau->SetSolarAct(nesolact_.solact);
-  honFlx11UpMu->SetSolarAct(nesolact_.solact);
+  honFlx11->SetSolarAct(solact);
+  honFlx11tau->SetSolarAct(solact);
+  honFlx11UpMu->SetSolarAct(solact);
   
   T2HKFlux * t2hkflux=new T2HKFlux();
   
 
   
   FlxTable * flx;
-  switch(neutcardatm_.fluxType)
+  switch(fluxType)
     {
     case 0:
-      if(neutcardatm_.itau==1)
+      if(itau==1)
 	{
 	  flx=honFlxtau;
 	}
-      else if(neutcardatm_.itau==0)
+      else if(itau==0)
 	{
-	  if(neutcardatm_.imode==0)
+	  if(imode==0)
 	    {
 	      flx=honFlx;
 	    }
-	  else if(neutcardatm_.imode==1)
+	  else if(imode==1)
 	    {
 	      flx=honFlxUpMu;
 	    }
 
 	  else
 	    {
-	      std::cout<<"Simulation mode "<<neutcardatm_.imode<<" invalid"<<std::endl;
+	      std::cout<<"Simulation mode "<<imode<<" invalid"<<std::endl;
 	      return 0;
 	    }
 	}
       else
 	{
-	  std::cout<<"Tau mode "<<neutcardatm_.itau<<" invalid"<<std::endl;
+	  std::cout<<"Tau mode "<<itau<<" invalid"<<std::endl;
 	  return 0;
 	}
       break;
     case 1:
-      if(neutcardatm_.itau==1)
+      if(itau==1)
 	{
 	  flx=honFlx11tau;
 	}
-      else if(neutcardatm_.itau==0)
+      else if(itau==0)
 	{
-	  if(neutcardatm_.imode==0)
+	  if(imode==0)
 	    {
 	      flx=honFlx11;
 	    }
-	  else if(neutcardatm_.imode==1)
+	  else if(imode==1)
 	    {
 	      flx=honFlx11UpMu;
 	    }
 
 	  else
 	    {
-	      std::cout<<"Simulation mode "<<neutcardatm_.imode<<" invalid"<<std::endl;
+	      std::cout<<"Simulation mode "<<imode<<" invalid"<<std::endl;
 	      return 0;
 	    }
 	}
       else
 	{
-	  std::cout<<"Tau mode "<<neutcardatm_.itau<<" invalid"<<std::endl;
+	  std::cout<<"Tau mode "<<itau<<" invalid"<<std::endl;
 	  return 0;
 	}
       break;
@@ -205,7 +266,7 @@ int main(int argc,char * argv[])
       flx=t2hkflux;
       break;
     default:
-      std::cout<<"Flux Type "<<neutcardatm_.fluxType<<" invalid"<<std::endl;
+      std::cout<<"Flux Type "<<fluxType<<" invalid"<<std::endl;
       return 0;
     }
   
@@ -237,44 +298,56 @@ int main(int argc,char * argv[])
     }
   
   //Setup generators
-  NeutGen* Gen_neut=new NeutGen();
-  Gen_neut->SetDetector(hk);
+#ifdef NEUT
+  NeutGen* Gen=new NeutGen();
   
   UpMuFluxGen * upmufluxGen=new UpMuFluxGen();
   upmufluxGen->SetRMax(30000);//cm
   upmufluxGen->SetDetector(rockCyl);
   upmufluxGen->SetTrueDetector(hk);
   
+#else
+#ifdef GENIE
+  GenieFluxGen * Gen=new GenieFluxGen(); 
+  GenieFluxGen* upmufluxGen=NULL; //upmu not yet w/ genie
+  
+#endif
+#endif
+  Gen->SetDetector(hk);
+  
 
   FluxGen * fluxGen;
 
-  switch(neutcardatm_.imode==1)
+  switch(imode==1)
     {
     case 0:
-      fluxGen=Gen_neut;
+      fluxGen=Gen;
       break;
     case 1:
       fluxGen=upmufluxGen;
       break;
     default:
-      std::cout<<"simulation mode "<<neutcardatm_.imode<<" invalid"<<std::endl;
+      std::cout<<"simulation mode "<<imode<<" invalid"<<std::endl;
       return 0;
     }
   
   
   
-  switch(neutcardatm_.fluxType)
+  switch(fluxType)
     {
     case 0: case 1:
-      fluxGen->SetNYears(neutcardatm_.neyears);
-      fluxGen->SetEMode(1); //use analytic inversion sampling
+      fluxGen->SetNYears(neyears);
+      //fluxGen->SetEMode(1); //use analytic inversion sampling
       break;
     case 2:
-      fluxGen->SetPOT(neutcardatm_.pot);
+      fluxGen->SetPOT(pot);
       fluxGen->SetDirMode(1); //get direction from T2HK flux class, do not caculate in generator
       break;
     }
-      
+#ifdef GENIE
+  fluxGen->SetEMode(0);  //genie's "GetCrossSection" is much slower, so need to use method which calls cross section from genie as rarely as possible
+#endif
+
   fluxGen->SetFlxTable(flx);
   
   int ijob=0;
@@ -329,8 +402,11 @@ int main(int argc,char * argv[])
 	}
       if(strcmp(s,"r")==0)
 	{
-	  
+#ifdef NEUT
 	  fluxGen->AddNewWriter(new NeutRootWriter,name->Data());
+#else
+	  fluxGen->AddNewWriter(new RootWriter,name->Data());
+#endif
 	}
       else if(strcmp(s,"n")==0)
 	{
@@ -345,7 +421,8 @@ int main(int argc,char * argv[])
  
 
   //setup nesting for upmu
-  if(neutcardatm_.imode==1 and neutcardatm_.fluxType<2)
+#ifdef NEUT //upmu not yet implemented w/ genie
+  if(imode==1 and fluxType<2)
     {
       double RMax=4000;
       std::vector<double> EMins;
@@ -456,16 +533,22 @@ int main(int argc,char * argv[])
     {
       fluxGen->Run();
     }
+#else
+  fluxGen->Run();
+#endif
   fprintf(stderr,"All finished up\n");
+#ifdef NEUT
   if(neutcardatm_.itau==1)
     {
       //do not remove if running in batch mode
       if(ijob==0)
 	system("rm supersim.card");
     }
+#endif
   fluxGen->CloseWriters();
-  delete Gen_neut;
-  delete upmufluxGen;
+  delete Gen;
+  if(upmufluxGen)
+    delete upmufluxGen;
   delete honFlx;
   delete honFlxtau;
   delete honFlxUpMu;
