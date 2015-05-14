@@ -1,6 +1,6 @@
 include ../../setup.make
-OBJS = HonFlx11.o HonFlx.o BeamFlux.o T2HKFlux.o
-INCFILES = HonFlx11.h HonFlx.h BeamFlux.h T2HKFlux.h
+OBJS = HonFlx11.o HonFlx.o BeamFlux.o T2HKFlux.o SNFlux.o
+INCFILES = HonFlx11.h HonFlx.h BeamFlux.h T2HKFlux.h SNFlux.h
 
 LIBDIR= ../../lib
 INCDIR= ../../include/
